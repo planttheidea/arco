@@ -8,6 +8,11 @@ import selectors from '../css/components/TodoList.css';
 // components
 import Todo from './Todo';
 
+// shapes
+import {
+  todoShape
+} from '../shapes/todos';
+
 const TodoList = ({todos}) => {
   return (
     <ul className={selectors.ul}>
@@ -24,7 +29,7 @@ const TodoList = ({todos}) => {
 };
 
 TodoList.propTypes = {
-  todos: PropTypes.arrayOf(PropTypes.object).isRequired
+  todos: PropTypes.arrayOf(todoShape).isRequired
 };
 
 export default createComponent(TodoList);

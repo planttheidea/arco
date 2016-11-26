@@ -4,17 +4,6 @@ import {
   createModule
 } from '../../src';
 
-// constants
-import {
-  ALL_TODOS,
-  COMPLETE_TODOS,
-  INCOMPLETE_TODOS
-} from '../constants/filters';
-import {
-  COMPLETE_TODOS_ROUTE,
-  INCOMPLETE_TODOS_ROUTE
-} from '../constants/routes';
-
 // selectors
 import {
   getFilterFromPath

@@ -10,6 +10,26 @@ import * as actions from '../modules/app';
 import selectors from '../css/pages/AddTodo.css';
 
 /**
+ * get the input element that is a child of the component node
+ *
+ * @param {function}getDOMNode
+ * @returns {HTMLElement}
+ */
+const getInput = (getDOMNode) => {
+  return getDOMNode().querySelector('input');
+};
+
+/**
+ * reset the input to its original value
+ *
+ * @param {HTMLInputElement} input
+ */
+const resetInput = (input) => {
+  input.value = '';
+  input.focus();
+};
+
+/**
  * map the app state to props
  *
  * @param {Object} app
@@ -26,11 +46,11 @@ const mapDispatchToProps = {
 /**
  * on mount wait for render and focus on the input
  *
- * @param {function} getInput
+ * @param {function} getDOMNode
  */
-const componentDidMount = ({getInput}) => {
+const componentDidMount = ({getDOMNode}) => {
   setTimeout(() => {
-    const input = getInput();
+    const input = getInput(getDOMNode);
 
     input.focus();
   }, 100);
@@ -46,30 +66,19 @@ const componentWillUnmount = ({clearRecentlyAdded}) => {
 };
 
 /**
- * get the input element that is a child of the component node
- *
- * @param {function}getDOMNode
- * @returns {HTMLElement}
- */
-const getInput = ({getDOMNode}) => {
-  return getDOMNode().querySelector('input');
-};
-
-/**
  * on button click, get the input value and add the todo for it
  *
  * @param {Event} e
  * @param {function} addTodo
- * @param {function} getInput
- * @param {function} resetInput
+ * @param {function} getDOMNode
  */
-const onClickButton = (e, {addTodo, getInput, resetInput}) => {
-  const input = getInput();
+const onClickButton = (e, {addTodo, getDOMNode}) => {
+  const input = getInput(getDOMNode);
   const value = input.value;
 
   if (value) {
     addTodo(value);
-    resetInput();
+    resetInput(input);
   }
 };
 
@@ -78,27 +87,14 @@ const onClickButton = (e, {addTodo, getInput, resetInput}) => {
  *
  * @param {Event} e
  * @param {function} addTodo
- * @param {function} resetInput
  */
-const onKeyDownInput = (e, {addTodo, resetInput}) => {
+const onKeyDownInput = (e, {addTodo}) => {
   const value = e.currentTarget.value;
 
   if (e.which === 13 && value) {
     addTodo(value);
-    resetInput();
+    resetInput(e.currentTarget);
   }
-};
-
-/**
- * reset the input to its original value
- *
- * @param {function} getInput
- */
-const resetInput = ({getInput}) => {
-  const input = getInput();
-
-  input.value = '';
-  input.focus();
 };
 
 const OPTIONS = {
@@ -106,10 +102,8 @@ const OPTIONS = {
   mapDispatchToProps,
   componentDidMount,
   componentWillUnmount,
-  getInput,
   onClickButton,
-  onKeyDownInput,
-  resetInput
+  onKeyDownInput
 };
 
 const Add = ({onClickButton, onKeyDownInput, recentlyAdded}) => {
@@ -146,7 +140,11 @@ const Add = ({onClickButton, onKeyDownInput, recentlyAdded}) => {
 };
 
 Add.propTypes = {
-  onClickButton: PropTypes.func.isRequired
+  addTodo: PropTypes.func.isRequired,
+  getDOMNode: PropTypes.func.isRequired,
+  onClickButton: PropTypes.func.isRequired,
+  onKeyDownInput: PropTypes.func.isRequired,
+  recentlyAdded: PropTypes.string
 };
 
 export default createComponent(Add, OPTIONS);

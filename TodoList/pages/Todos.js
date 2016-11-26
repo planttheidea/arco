@@ -19,6 +19,11 @@ import * as actions from '../modules/app';
 // styles
 import selectors from '../css/pages/Todos.css';
 
+// shapes
+import {
+  todoShape
+} from '../shapes/todos';
+
 /**
  * map the app state to props, with the additional filteredTodos value
  *
@@ -118,8 +123,11 @@ const Todos = ({filteredTodos}) => {
 };
 
 Todos.propTypes = {
-  location: locationShape,
-  todos: PropTypes.arrayOf(PropTypes.object)
+  filter: PropTypes.string.isRequired,
+  filteredTodos: PropTypes.arrayOf(todoShape).isRequired,
+  location: locationShape.isRequired,
+  setFilter: PropTypes.func.isRequired,
+  todos: PropTypes.arrayOf(todoShape).isRequired
 };
 
 export default createComponent(Todos, OPTIONS);

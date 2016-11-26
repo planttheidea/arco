@@ -89,8 +89,12 @@ const Todo = ({id, isDone, onClickRemoveButton, onClickToggleDone, value}) => {
 };
 
 Todo.propTypes = {
+  deleteTodo: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,
   isDone: PropTypes.bool.isRequired,
+  onClickRemoveButton: PropTypes.func.isRequired,
+  onClickToggleDone: PropTypes.func.isRequired,
+  toggleTodoDone: PropTypes.func.isRequired,
   value: PropTypes.string.isRequired
 };
 
