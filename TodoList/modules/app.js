@@ -1,7 +1,8 @@
 import uuid from 'node-uuid';
 
 import {
-  createModule
+  createModule,
+  get
 } from '../../src';
 
 // selectors

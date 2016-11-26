@@ -14,8 +14,15 @@ const REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol
 
 const ARCO_STATE_KEY = '@@arco-state';
 
+const STATUS = {
+  ERROR: 'ERROR',
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS'
+};
+
 export {keys};
 
+export {ARCO_STATE_KEY};
 export {REACT_ELEMENT_TYPE};
 export {REACT_LIFECYCLE_METHODS};
-export {ARCO_STATE_KEY};
+export {STATUS};
