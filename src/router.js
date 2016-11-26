@@ -81,3 +81,5 @@ export {match};
 export {routerShape};
 export {syncHistoryWithStore};
 export {withRouter};
+
+export default createHistory;

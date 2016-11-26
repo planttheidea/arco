@@ -122,4 +122,6 @@ const createSelector = (
   return getStandardSelector(properties, selectorGenerator, getComputedValue);
 };
 
+export {createSelector};
+
 export default createSelector;

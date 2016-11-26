@@ -84,4 +84,6 @@ const createStore = (modules, {
   return store;
 };
 
+export {createStore};
+
 export default createStore;

@@ -108,6 +108,7 @@ const getActionConstants = (namespace) => {
   }, {});
 };
 
+export {createModule};
 export {getActionConstants};
 export {getModules};
 

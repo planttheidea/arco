@@ -53,3 +53,12 @@ export {post};
 export {put};
 
 export {setAjaxDefaults};
+
+export default {
+  del,
+  get,
+  head,
+  patch,
+  post,
+  put
+};

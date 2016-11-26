@@ -211,6 +211,7 @@ const createComponent = (PassedComponent, options = {}) => {
   return getStatelessComponent(PassedComponent, options);
 };
 
+export {createComponent};
 export {ReactComponent as StatefulComponent};
 
 export default createComponent;
