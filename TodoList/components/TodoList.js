@@ -2,20 +2,13 @@ import createComponent, {
   PropTypes
 } from '../../src';
 
-import jile from 'react-jile';
+// styles
+import selectors from '../css/components/TodoList.css';
 
 // components
 import Todo from './Todo';
 
-const STYLES = {
-  '.ul': {
-    listStyle: 'none',
-    margin: 0,
-    padding: 0
-  }
-};
-
-const TodoList = ({selectors, todos}) => {
+const TodoList = ({todos}) => {
   return (
     <ul className={selectors.ul}>
       {todos.map((todo) => {
@@ -31,8 +24,7 @@ const TodoList = ({selectors, todos}) => {
 };
 
 TodoList.propTypes = {
-  selectors: PropTypes.object.isRequired,
   todos: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
-export default jile(STYLES)(createComponent(TodoList));
+export default createComponent(TodoList);

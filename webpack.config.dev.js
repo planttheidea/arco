@@ -1,6 +1,8 @@
 'use strict';
 
 const path = require('path');
+
+const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackDashboard = require('webpack-dashboard/plugin');
@@ -15,26 +17,42 @@ const preLoaders = defaultConfig.module.preLoaders.map((preLoader) => {
   });
 });
 
-const loaders = defaultConfig.module.loaders.map((loader) => {
-  if (loader.loader === 'babel') {
+const loaders = defaultConfig.module.loaders
+  .map((loader) => {
+    if (loader.loader === 'babel') {
+      return Object.assign({}, loader, {
+        cacheable: true,
+        include: [
+          /src/,
+          /TodoList/
+        ],
+        query: {
+          plugins: [
+            'transform-decorators-legacy'
+          ]
+        }
+      });
+    }
+
     return Object.assign({}, loader, {
+      cacheable: true
+    });
+  })
+  .concat([
+    {
       cacheable: true,
       include: [
-        /src/,
+        /node_modules/,
         /TodoList/
       ],
-      query: {
-        plugins: [
-          'transform-decorators-legacy'
-        ]
-      }
-    });
-  }
-
-  return Object.assign({}, loader, {
-    cacheable: true
-  });
-});
+      loaders: [
+        'style',
+        'css?modules=true&importLoaders=1',
+        'postcss'
+      ],
+      test: /\.css$/
+    }
+  ]);
 
 module.exports = Object.assign({}, defaultConfig, {
   cache: true,

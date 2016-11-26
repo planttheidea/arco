@@ -2,46 +2,18 @@ import createComponent, {
   PropTypes
 } from '../../src';
 
+// actions
 import * as actions from '../modules/app';
 
-import jile from 'react-jile';
+// styles
+import selectors from '../css/components/Todo.css';
 
-const STYLES = {
-  '.li': {
-    display: 'block',
-    listStyle: 'none',
-    margin: 0,
-    padding: 0
-  },
-  '.container': {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'nowrap'
-  },
-  '.item': {
-    flexBasis: 'auto',
-    flexGrow: 1,
-    flexShrink: 0,
-
-    '&.done': {
-      textDecoration: 'line-through'
-    }
-  },
-  '.action': {
-    backgroundColor: 'transparent',
-    boxShadow: 'none',
-    flexBasis: 'auto',
-    flexGrow: 0,
-    flexShrink: 0,
-    textDecoration: 'none',
-
-    '&:hover': {
-      backgroundColor: 'transparent',
-      textDecoration: 'underline'
-    }
-  }
-};
-
+/**
+ * get the target's ID from its data-id attribute
+ *
+ * @param {HTMLElement} target
+ * @returns {string}
+ */
 const getId = (target) => {
   return target.getAttribute('data-id');
 };
@@ -50,12 +22,24 @@ const mapDispatchToProps = {
   ...actions
 };
 
+/**
+ * on click of the remove button, delete the todo from the list
+ *
+ * @param {Event} e
+ * @param {function} deleteTodo
+ */
 const onClickRemoveButton = (e, {deleteTodo}) => {
   const id = getId(e.currentTarget);
 
   deleteTodo(id);
 };
 
+/**
+ * on click of the toggle done button, toggle the isDone state of the todo
+ *
+ * @param {Event} e
+ * @param {function} toggleTodoDone
+ */
 const onClickToggleDone = (e, {toggleTodoDone}) => {
   const id = getId(e.currentTarget);
 
@@ -68,7 +52,7 @@ const OPTIONS = {
   onClickToggleDone
 };
 
-const Todo = ({id, isDone, onClickRemoveButton, onClickToggleDone, selectors, value}) => {
+const Todo = ({id, isDone, onClickRemoveButton, onClickToggleDone, value}) => {
   let itemClassName = `${selectors.item}`;
 
   if (isDone) {
@@ -107,8 +91,7 @@ const Todo = ({id, isDone, onClickRemoveButton, onClickToggleDone, selectors, va
 Todo.propTypes = {
   id: PropTypes.string.isRequired,
   isDone: PropTypes.bool.isRequired,
-  selectors: PropTypes.object.isRequired,
   value: PropTypes.string.isRequired
 };
 
-export default jile(STYLES)(createComponent(Todo, OPTIONS));
+export default createComponent(Todo, OPTIONS);

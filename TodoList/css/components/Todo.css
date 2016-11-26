@@ -1,0 +1,36 @@
+.li {
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.item {
+    flex-basis: auto;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.item.done {
+    text-decoration: line-through;
+}
+
+.action {
+    background-color: transparent;
+    box-shadow: none;
+    flex-basis: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.action:hover {
+    background-color: transparent;
+    text-decoration: underline;
+}

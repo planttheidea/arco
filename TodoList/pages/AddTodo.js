@@ -3,38 +3,18 @@ import createComponent, {
   findDOMNode
 } from '../../src';
 
-import jile from 'react-jile';
-
 // actions
 import * as actions from '../modules/app';
 
-const STYLES = {
-  '.h1': {
-    textAlign: 'center'
-  },
-  '.inputContainer': {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'nowrap',
-    marginBottom: 15,
-    width: '100%'
-  },
-  '.input': {
-    display: 'block',
-    flexBasis: 0,
-    flexGrow: 1,
-    flexShrink: 0
-  },
-  '.button': {
-    display: 'block',
-    flexBasis: 'auto',
-    flexGrow: 0,
-    flexShrink: 0,
-    marginLeft: 15
-  }
-};
+// styles
+import selectors from '../css/pages/AddTodo.css';
 
+/**
+ * map the app state to props
+ *
+ * @param {Object} app
+ * @returns {Object}
+ */
 const mapStateToProps = ({app}) => {
   return app;
 };
@@ -43,6 +23,11 @@ const mapDispatchToProps = {
   ...actions
 };
 
+/**
+ * on mount wait for render and focus on the input
+ *
+ * @param {function} getInput
+ */
 const componentDidMount = ({getInput}) => {
   setTimeout(() => {
     const input = getInput();
@@ -51,14 +36,33 @@ const componentDidMount = ({getInput}) => {
   }, 100);
 };
 
+/**
+ * on unmount, clear the recently-added message
+ *
+ * @param {function} clearRecentlyAdded
+ */
 const componentWillUnmount = ({clearRecentlyAdded}) => {
   clearRecentlyAdded();
 };
 
+/**
+ * get the input element that is a child of the component node
+ *
+ * @param {function}getDOMNode
+ * @returns {HTMLElement}
+ */
 const getInput = ({getDOMNode}) => {
   return getDOMNode().querySelector('input');
 };
 
+/**
+ * on button click, get the input value and add the todo for it
+ *
+ * @param {Event} e
+ * @param {function} addTodo
+ * @param {function} getInput
+ * @param {function} resetInput
+ */
 const onClickButton = (e, {addTodo, getInput, resetInput}) => {
   const input = getInput();
   const value = input.value;
@@ -69,6 +73,13 @@ const onClickButton = (e, {addTodo, getInput, resetInput}) => {
   }
 };
 
+/**
+ * on keydown, if enter is pressed then save the todo
+ *
+ * @param {Event} e
+ * @param {function} addTodo
+ * @param {function} resetInput
+ */
 const onKeyDownInput = (e, {addTodo, resetInput}) => {
   const value = e.currentTarget.value;
 
@@ -78,6 +89,11 @@ const onKeyDownInput = (e, {addTodo, resetInput}) => {
   }
 };
 
+/**
+ * reset the input to its original value
+ *
+ * @param {function} getInput
+ */
 const resetInput = ({getInput}) => {
   const input = getInput();
 
@@ -96,7 +112,7 @@ const OPTIONS = {
   resetInput
 };
 
-const Add = ({onClickButton, onKeyDownInput, recentlyAdded, selectors}) => {
+const Add = ({onClickButton, onKeyDownInput, recentlyAdded}) => {
   return (
     <section>
       <h1 className={selectors.h1}>
@@ -130,8 +146,7 @@ const Add = ({onClickButton, onKeyDownInput, recentlyAdded, selectors}) => {
 };
 
 Add.propTypes = {
-  onClickButton: PropTypes.func.isRequired,
-  selectors: PropTypes.object.isRequired
+  onClickButton: PropTypes.func.isRequired
 };
 
-export default jile(STYLES)(createComponent(Add, OPTIONS));
+export default createComponent(Add, OPTIONS);

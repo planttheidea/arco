@@ -1,0 +1,29 @@
+.nav {
+    background-color: #fff;
+    box-shadow: 0 0 5px #121517;
+    width: 100%;
+}
+
+.navItemsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin: 0 auto;
+}
+
+.navItem {
+    color: inherit;
+    flex-basis: 50%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+    width: 50%;
+}
+
+.navItem:hover {
+    background-color: #3b444b;
+    color: #fff;
+}

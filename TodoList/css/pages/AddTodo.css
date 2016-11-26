@@ -1,0 +1,27 @@
+.h1 {
+    text-align: center;
+}
+
+.inputContainer {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.input {
+    display: block;
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.button {
+    display: block;
+    flex-basis: auto;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-left: 15px;
+}

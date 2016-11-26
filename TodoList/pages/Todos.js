@@ -4,8 +4,6 @@ import createComponent, {
   PropTypes
 } from '../../src';
 
-import jile from 'react-jile';
-
 // components
 import TodoList from '../components/TodoList';
 
@@ -18,41 +16,15 @@ import {
 // actions
 import * as actions from '../modules/app';
 
-const STYLES = {
-  '.h1': {
-    textAlign: 'center'
-  },
-  '.ul': {
-    display: 'block',
-    fontSize: 10,
-    listStyle: 'none',
-    textAlign: 'right'
-  },
-  '.li': {
-    display: 'inline-block',
-    listStyle: 'none',
-    padding: 4
-  },
-  '.addTodoContainer': {
-    padding: '15px 0',
-    textAlign: 'right'
-  },
-  '.addTodo': {
-    backgroundColor: '#fff',
-    borderRadius: 4,
-    boxShadow: '0 0 5px #7a7a7a',
-    color: 'inherit!important',
-    fontSize: 12,
-    display: 'inline-block',
-    padding: '4px 8px',
-    textDecoration: 'none!important',
+// styles
+import selectors from '../css/pages/Todos.css';
 
-    '&:hover': {
-      backgroundColor: '#f0f0f0'
-    }
-  }
-};
-
+/**
+ * map the app state to props, with the additional filteredTodos value
+ *
+ * @param {Object} app
+ * @returns {Object}
+ */
 const mapStateToProps = ({app}) => {
   const filteredTodos = getFilteredTodos(app);
 
@@ -66,6 +38,13 @@ const mapDispatchToProps = {
   ...actions
 };
 
+/**
+ * on mount, if the filter does not match the one in state then update it
+ *
+ * @param {{pathname: string}} location
+ * @param {string} filter
+ * @param {function} setFilter
+ */
 const componentDidMount = ({location, filter, setFilter}) => {
   const pathname = location.pathname;
   const expectedFilter = getFilterFromPath({
@@ -77,6 +56,13 @@ const componentDidMount = ({location, filter, setFilter}) => {
   }
 };
 
+/**
+ * on update, set the filter if the location has changed
+ *
+ * @param {{pathname: string}} location
+ * @param {function} setFilter
+ * @param {{pathname: string}} previousLocation
+ */
 const componentDidUpdate = ({location, setFilter}, {location: previousLocation}) => {
   if (location.pathname !== previousLocation.pathname) {
     setFilter(location.pathname);
@@ -90,7 +76,7 @@ const OPTIONS = {
   componentDidUpdate
 };
 
-const Todos = ({filteredTodos, selectors}) => {
+const Todos = ({filteredTodos}) => {
   return (
     <section>
       <h1 className={selectors.h1}>
@@ -133,8 +119,7 @@ const Todos = ({filteredTodos, selectors}) => {
 
 Todos.propTypes = {
   location: locationShape,
-  selectors: PropTypes.object.isRequired,
   todos: PropTypes.arrayOf(PropTypes.object)
 };
 
-export default jile(STYLES)(createComponent(Todos, OPTIONS));
+export default createComponent(Todos, OPTIONS);

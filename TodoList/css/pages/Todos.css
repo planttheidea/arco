@@ -1,0 +1,36 @@
+.h1 {
+    text-align: center;
+}
+
+.ul {
+    display: block;
+    font-size: 10px;
+    list-style: none;
+    text-align: right;
+}
+
+.li {
+    display: inline-block;
+    list-style: none;
+    padding: 4px;
+}
+
+.addTodoContainer {
+    padding: 15px 0;
+    text-align: right;
+}
+
+.addTodo {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 5px #7a7a7a;
+    color: inherit!important;
+    display: inline-block;
+    font-size: 12px;
+    padding: 4px 8px;
+    text-decoration: none!important;
+}
+
+.addTodo:hover {
+    background-color: #f0f0f0;
+}
