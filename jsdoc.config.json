@@ -1,0 +1,42 @@
+{
+  "configHelpUrl": "http://usejsdoc.org/about-configuring-jsdoc.html",
+  "markdown": {
+    "excludeTags": [
+      "author"
+    ]
+  },
+  "opts": {
+    "destination": "./docs",
+    "package": "./package.json",
+    "readme": "./README.md",
+    "recurse": true,
+    "template": "./node_modules/ink-docstrap/template"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "source": {
+    "include": [
+      "src"
+    ],
+    "exclude": [],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": [
+      "closure",
+      "jsdoc"
+    ]
+  },
+  "templates": {
+    "includeDate": false,
+    "linenums": true,
+    "navType": "inline",
+    "outputSourceFiles": true,
+    "syntaxTheme": "dark",
+    "systemName": "arco",
+    "theme": "paper"
+  }
+}

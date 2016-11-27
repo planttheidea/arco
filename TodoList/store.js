@@ -10,6 +10,6 @@ const reducers = [
 ];
 
 export default createStore(reducers, {
-  history,
-  shouldRestoreState: true
+  autoRestore: true,
+  history
 });

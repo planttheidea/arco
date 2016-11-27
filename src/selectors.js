@@ -14,9 +14,18 @@ import {
 } from './utils';
 
 /**
+ * @module selectors
+ */
+
+/**
+ * @private
+ *
+ * @function createIdentitySelector
+ *
+ * @description
  * create selector to retrieve identity based on deeply-nested values
  *
- * @param {function|string} property
+ * @param {function|string} property property string to convert to nested path
  * @returns {function(Object): *}
  */
 export const createIdentitySelector = (property) => {
@@ -32,9 +41,14 @@ export const createIdentitySelector = (property) => {
 };
 
 /**
+ * @private
+ *
+ * @function getIdentityValue
+ *
+ * @description
  * pass-through function to return the value passed to it
  *
- * @param {*} value
+ * @param {*} value value to pass through
  * @returns {*}
  */
 export const getIdentityValue = (value) => {
@@ -42,9 +56,14 @@ export const getIdentityValue = (value) => {
 };
 
 /**
+ * @private
+ *
+ * @function getStructuredValue
+ *
+ * @description
  * build a structured value to return for structured selectors
  *
- * @param {Array<string>} keys
+ * @param {Array<string>} keys array of keys to use for values in structured selector
  * @returns {function(Array<*>): Object}
  */
 export const getStructuredValue = (keys) => {
@@ -58,11 +77,16 @@ export const getStructuredValue = (keys) => {
 };
 
 /**
+ * @private
+ *
+ * @function getStandardSelector
+ *
+ * @description
  * get the standard selector type (single value)
  *
- * @param {Array<string>} paths
- * @param {function} selectorGenerator
- * @param {function} getValue
+ * @param {Array<string>} paths array of strings denoting nested paths of values in state
+ * @param {function} selectorGenerator method to use for generating selector
+ * @param {function} getValue method to use for computing the value to return
  * @returns {function}
  */
 export const getStandardSelector = (paths, selectorGenerator, getValue) => {
@@ -73,11 +97,16 @@ export const getStandardSelector = (paths, selectorGenerator, getValue) => {
 
 /* eslint-disable valid-jsdoc */
 /**
+ * @private
+ *
+ * @function getStructuredSelector
+ *
+ * @description
  * get the structured selector based on the properties passed
  *
- * @param {Array<string>} keys
- * @param {Array<string>} paths
- * @param {function} selectorGenerator
+ * @param {Array<string>} keys array of keys to use for values in structured selector
+ * @param {Array<string>} paths array of strings denoting nested paths to use for values in structured selector
+ * @param {function} selectorGenerator method to use for generating selector
  * @returns {function}
  */
 /* eslint-enable */
@@ -92,13 +121,28 @@ export const getStructuredSelector = ({keys, paths}, selectorGenerator) => {
 };
 
 /**
+ * @function createSelector
+ *
+ * @description
  * based on the array of properties and the reducer passed
  * create a selector
- * 
- * @param {Array<string>|{keys: Array<string>, paths: Array<string>}} properties
- * @param {function} getComputedValue
- * @param {function} customMemoize
- * @param {function} customMemoizeOptions
+ *
+ * @example
+ * import {
+ *  createSelector
+ * } from 'arco';
+ *
+ * const hasBaz = createSelector(['foo.bar[0].baz'], (baz) => {
+ *  return !!baz;
+ * });
+ *
+ * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true
+ * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true, pulled from cache
+ *
+ * @param {Array<string>|{keys: Array<string>, paths: Array<string>}} properties properties to retrieve from state
+ * @param {function} [getComputedValue=getIdentityValue] method to use for getting the computed value from the properties
+ * @param {function} [customMemoize=null] custom memoizer function to use in place of the default
+ * @param {function} [customMemoizeOptions=null] additional options for using the custom memoizer option
  * @returns {function}
  */
 export const createSelector = (

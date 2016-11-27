@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>arco Index</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.paper.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">arco</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-ajax.html">ajax</a></li><li><a href="module-components.html">components</a></li><li><a href="module-index.html">index</a></li><li><a href="module-router.html">router</a></li><li><a href="module-selectors.html">selectors</a></li><li><a href="module-state.html">state</a></li><li><a href="module-store.html">store</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	
+	
+
+
+
+    <h3>arco 0.1.0</h3>
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+    <section class="readme-section">
+        <article><h1>arco</h1><p>A React+Redux framework to ease the fatigue</p>
+<h4>Installation</h4><pre class="prettyprint source"><code>$ npm i arco --save</code></pre><h4>Summary</h4><p><code>arco</code> is a framework designed to streamline a lot of the architectural configuration of a React application by providing several web-standard packages built-in, as well as an API that is built to keep boilerplate minimal.</p>
+<p>The following packages are all included as part of <code>arco</code>:</p>
+<ul>
+<li><a href="https://github.com/facebook/react">react</a> for views</li>
+<li><a href="https://github.com/facebook/react/tree/master/packages/react-dom">react-dom</a> for rendering into the browser</li>
+<li><a href="https://github.com/ReactTraining/react-router">react-router</a> for routing</li>
+<li><a href="https://github.com/reactjs/react-router-redux">react-router-redux</a> for react-router bindings into redux</li>
+<li><a href="https://github.com/reactjs/redux">redux</a> for state management</li>
+<li><a href="https://github.com/acdlite/redux-actions">redux-actions</a> for simplified redux action creation</li>
+<li><a href="https://github.com/gaearon/redux-thunk">redux-thunk</a> for asynchronous actions (optional)</li>
+<li><a href="https://github.com/reactjs/reselect">reselect</a> for memoized selectors</li>
+</ul>
+<p><code>arco</code> provides a layer of abstraction over the use of these so that you can focus on implementation, but with the same sort of flexibility you would expect from each of these packages directly. Think of it as convention <strong>with</strong> configuration.</p>
+<p>Additionally, keeping in line with <code>redux</code>, there is a focus on <em>immutability</em> and <em>pure functions</em>. Notice in the usage example below that <code>App</code> has lifecycle methods and an instance method with access to props even though it is a functional component. This is explained more in detail below.</p>
+<h4>Usage</h4><p>A full application (with store, actions, and reducer) in 64 lines:</p>
+<pre class="prettyprint source lang-javascript"><code>import createComponent, {
+  createHistory,
+  createModule,
+  createStore,
+  render
+} from 'arco';
+
+// create a module
+const appModule = createModule('app');
+
+// create actions for that module
+const increaseCount = appModule.createAction('INCREASE_COUNT', (currentCount) => {
+  return currentCount + 1;
+});
+
+// create a reducer for that module
+const reducer = appModule.createReducer({count: 0}, {
+  [increaseCount](state, {payload}) {
+    return {
+      ...state,
+      count: payload
+    };
+  }
+});
+
+// create your component
+const App = ({count, onClickButton}) => {
+  return (
+    &lt;main>
+      &lt;div>
+        Current count: {count}
+      &lt;/div>
+
+      &lt;button
+        onClick={onClickButton}
+        type=&quot;button&quot;
+      >
+        Click to increase the count
+      &lt;/button>
+    &lt;/main>
+  );
+};
+
+// give it options
+const ConnectedApp = createComponent(App, {
+    mapStateToProps({app}) {
+      return app; 
+    },
+    mapDispatchToProps: {
+      increaseCount
+    },
+    onClickButton(e, {count, increaseCount}) {
+      increaseCount(count);
+    }
+});
+
+// create your store
+const store = createStore([appModule], {
+  history: createHistory()
+});
+
+// render
+render((
+  &lt;App/>
+), document.body, store);</code></pre><p>The biggest change from what you are used to is probably the options we pass to create <code>ConnectedApp</code>. Internally, <code>arco</code> creates lifecycle and standard methods where the props and context are passed in as parameters to the method (rather than accessing them through the <em>this</em> reference to the instance). This allows you to write your lifecycle and instance methods as pure functions, making them both more testable and free of side effects.</p>
+<p>The full range of options is covered on the <a href="http://planttheidea.github.io/acro">documentation site</a>.</p></article>
+    </section>
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

@@ -18,20 +18,21 @@ import createComponent, {
 // modules
 import createModule, {
   getActionConstants
-} from './modules';
+} from './state';
 
 // store
 import createStore from './store';
 
 // ajax
-import {
+import ajax, {
+  createInstance,
   del,
   get,
   head,
   patch,
   post,
   put,
-  setAjaxDefaults
+  setDefaults
 } from './ajax';
 
 // router
@@ -58,11 +59,30 @@ import {
 import createSelector from './selectors';
 
 /**
+ * @module index
+ */
+
+/**
+ * @function render
+ *
+ * @description
  * render the passed component with the provided store
  *
- * @param {React.Component} Component
- * @param {HTMLElement} element
- * @param {Object} store
+ * @example
+ * import {
+ *  render
+ * } from 'arco';
+ *
+ * import App from './App';
+ * import store from './store';
+ *
+ * render((
+ *  <App/>
+ * ), document.querySelector('#app'), store);
+ *
+ * @param {React.Component} Component component to render in element
+ * @param {HTMLElement} element HTML element to render Component inside of
+ * @param {Object} store redux store to pass to all components
  */
 export const render = (Component, element, store) => {
   ReactRender((
@@ -81,13 +101,15 @@ export {getActionConstants};
 
 export {createStore};
 
+export {ajax};
+export {createInstance};
 export {del};
 export {get};
 export {head};
 export {patch};
 export {post};
 export {put};
-export {setAjaxDefaults};
+export {setDefaults};
 
 export {IndexLink};
 export {IndexRedirect};

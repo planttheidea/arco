@@ -14,9 +14,14 @@ import {
 } from './constants';
 
 /**
+ * @private
+ *
+ * @function getComponentMethods
+ *
+ * @description
  * get the methods that will be added to the component
  *
- * @param {Object} options
+ * @param {Object} options options passed to arco when generating the component
  * @returns {{lifecycleMethods: Object, localMethods: Object}}
  */
 export const getComponentMethods = (options) => {
@@ -38,11 +43,16 @@ export const getComponentMethods = (options) => {
 };
 
 /**
+ * @private
+ *
+ * @function getComponentMethods
+ *
+ * @description
  * recursively get the nested value from the the object
  * based on the array of properties passed
  *
- * @param {Object} object
- * @param {Array<string>} properties
+ * @param {Object} object object to retrieve nested value from
+ * @param {Array<string>} properties array of property values to move down the tree
  * @returns {*}
  */
 export const getNestedValueFromObject = (object, properties) => {
@@ -63,10 +73,15 @@ export const getNestedValueFromObject = (object, properties) => {
 };
 
 /**
+ * @private
+ *
+ * @function getComponentMethods
+ *
+ * @description
  * get the flattened object with both props and methods
  *
- * @param {Object} props
- * @param {Object} methods
+ * @param {Object} props native props of the component
+ * @param {Object} methods instance methods to pass down as props
  * @returns {Object}
  */
 export const getPropsAndMethods = (props, methods) => {
@@ -77,9 +92,14 @@ export const getPropsAndMethods = (props, methods) => {
 };
 
 /**
+ * @private
+ *
+ * @function getComponentMethods
+ *
+ * @description
  * is the object an extension of the Component prototype
  *
- * @param {*} object
+ * @param {*} object object to test
  * @returns {boolean}
  */
 export const isReactClass = (object) => {
@@ -87,9 +107,14 @@ export const isReactClass = (object) => {
 };
 
 /**
+ * @private
+ *
+ * @function getComponentMethods
+ *
+ * @description
  * is the object a composite component wrapper for React
  * 
- * @param {*} object
+ * @param {*} object object to test
  * @returns {boolean}
  */
 export const isReactCompositeComponentWrapper = (object) => {
@@ -97,9 +122,14 @@ export const isReactCompositeComponentWrapper = (object) => {
 };
 
 /**
+ * @private
+ *
+ * @function getComponentMethods
+ *
+ * @description
  * is the object a React element
  *
- * @param {ReactElement} object
+ * @param {ReactElement} object object to test
  * @returns {boolean}
  */
 export const isReactElement = (object) => {
@@ -107,9 +137,14 @@ export const isReactElement = (object) => {
 };
 
 /**
+ * @private
+ *
+ * @function getComponentMethods
+ *
+ * @description
  * is the object passed an event
  *
- * @param {*} object
+ * @param {*} object object to test
  * @returns {boolean}
  */
 export const isReactEvent = (object) => {
@@ -117,6 +152,11 @@ export const isReactEvent = (object) => {
 };
 
 /**
+ * @private
+ *
+ * @function getComponentMethods
+ *
+ * @description
  * serialize the values for memoization
  *
  * @returns {string}
@@ -140,9 +180,14 @@ export const memoizeSerializer = function() {
 };
 
 /**
+ * @private
+ *
+ * @function getComponentMethods
+ *
+ * @description
  * use fast-memoize with a custom serializer to handle memoizing functions
  *
- * @param {function} fn
+ * @param {function} fn method to memoize
  * @returns {function}
  */
 export const memoize = (fn) => {

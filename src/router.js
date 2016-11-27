@@ -31,27 +31,50 @@ const HISTORY_TYPES = {
 };
 
 /**
+ * @module router
+ */
+
+/**
+ * @function createHistory
+ *
+ * @description
  * pass the internal react-router pieces necessary to build a custom history
  *
- * @param {function|string} createHistory
- * @param {Object} memoryHisoryOptions
+ * @example
+ * import {
+ *  createHistory
+ * } from 'arco';
+ *
+ * // create using the string shorthand
+ * // valid values are "browser", "hash", "memory"
+ * const history = createHistory('browser');
+ *
+ * // or with a custom function
+ * const history = createHistory(({hashHistory, useRouterHistory}) => {
+ *  return useRouterHistory(hashHistory)({
+ *    queryKey: false
+ *  });
+ * });
+ *
+ * @param {function|string} [history=browser] type of history to create
+ * @param {Object} [memoryHistoryOptions] options specific to creating a memory history
  * @returns {Object}
  */
-export const createHistory = (createHistory = HISTORY_TYPES.BROWSER, memoryHisoryOptions) => {
-  if (createHistory === HISTORY_TYPES.BROWSER) {
+export const createHistory = (history = HISTORY_TYPES.BROWSER, memoryHistoryOptions) => {
+  if (history === HISTORY_TYPES.BROWSER) {
     return browserHistory;
   }
 
-  if (createHistory === HISTORY_TYPES.HASH) {
+  if (history === HISTORY_TYPES.HASH) {
     return hashHistory;
   }
 
-  if (createHistory === HISTORY_TYPES.MEMORY) {
-    return createMemoryHistory(memoryHisoryOptions);
+  if (history === HISTORY_TYPES.MEMORY) {
+    return createMemoryHistory(memoryHistoryOptions);
   }
 
-  if (isFunction(createHistory)) {
-    return createHistory({
+  if (isFunction(history)) {
+    return history({
       browserHistory,
       createMemoryHistory,
       formatPattern,
