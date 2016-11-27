@@ -14,7 +14,7 @@ import {
 } from '../selectors/todos';
 
 // actions
-import * as actions from '../modules/app';
+import * as actions from '../modules/app/appActions';
 
 // styles
 import selectors from '../css/pages/Todos.css';
@@ -123,7 +123,7 @@ const Todos = ({filteredTodos}) => {
 };
 
 Todos.propTypes = {
-  filter: PropTypes.string.isRequired,
+  filter: PropTypes.string,
   filteredTodos: PropTypes.arrayOf(todoShape).isRequired,
   location: locationShape.isRequired,
   setFilter: PropTypes.func.isRequired,

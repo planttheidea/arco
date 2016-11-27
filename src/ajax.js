@@ -7,7 +7,7 @@ import {
   keys
 } from './utils';
 
-const setAjaxDefaults = ({baseURL, headers} = {}, axiosInstance = axios) => {
+export const setAjaxDefaults = ({baseURL, headers} = {}, axiosInstance = axios) => {
   if (baseURL) {
     axiosInstance.defaults.baseURL = baseURL;
   }
@@ -38,21 +38,12 @@ const setAjaxDefaults = ({baseURL, headers} = {}, axiosInstance = axios) => {
   return axiosInstance;
 };
 
-const del = axios.delete;
-const get = axios.get;
-const head = axios.head;
-const patch = axios.patch;
-const post = axios.post;
-const put = axios.put;
-
-export {del};
-export {get};
-export {head};
-export {patch};
-export {post};
-export {put};
-
-export {setAjaxDefaults};
+export const del = axios.delete;
+export const get = axios.get;
+export const head = axios.head;
+export const patch = axios.patch;
+export const post = axios.post;
+export const put = axios.put;
 
 export default {
   del,

@@ -1,28 +1,24 @@
 import uuid from 'node-uuid';
 
-import {
-  createModule,
-  get
-} from '../../src';
-
 // selectors
 import {
   getFilterFromPath
-} from '../selectors/todos';
+} from '../../selectors/todos';
 
-const ADD_TODO = 'ADD_TODO';
-const CLEAR_RECENTLY_ADDED = 'CLEAR_RECENTLY_ADDED';
-const DELETE_TODO = 'DELETE_TODO';
-const SET_FILTER = 'SET_FILTER';
-const TOGGLE_TODO_DONE = 'TOGGLE_TODO_DONE';
+// module
+import module, {
+  addTodo,
+  clearRecentlyAdded,
+  deleteTodo,
+  setFilter,
+  toggleTodoDone
+} from './appActions';
 
-const module = createModule('app');
-
-export const addTodo = module.createAction(ADD_TODO);
-export const clearRecentlyAdded = module.createAction(CLEAR_RECENTLY_ADDED);
-export const deleteTodo = module.createAction(DELETE_TODO);
-export const setFilter = module.createAction(SET_FILTER);
-export const toggleTodoDone = module.createAction(TOGGLE_TODO_DONE);
+const INITIAL_STATE = {
+  filter: null,
+  recentlyAdded: null,
+  todos: []
+};
 
 /**
  * add a todo to the list of todos
@@ -41,7 +37,7 @@ const addTodoHandler = (state, {payload}) => {
     ...state.todos,
     todoObject
   ];
-  
+
   return {
     ...state,
     recentlyAdded: payload,
@@ -73,12 +69,12 @@ const deleteTodoHandler = (state, {payload}) => {
   const todoIndex = state.todos.findIndex(({id}) => {
     return id === payload;
   });
-  
+
   const todos = [
     ...state.todos.slice(0, todoIndex),
     ...state.todos.slice(todoIndex + 1)
   ];
-  
+
   return {
     ...state,
     todos
@@ -131,18 +127,10 @@ const toggleTodoDoneHandler = (state, {payload}) => {
   };
 };
 
-const INITIAL_STATE = {
-  filter: null,
-  recentlyAdded: null,
-  todos: []
-};
-
-module.createReducer(INITIAL_STATE, {
+export default module.createReducer(INITIAL_STATE, {
   [addTodo]: addTodoHandler,
   [clearRecentlyAdded]: clearRecentlyAddedHandler,
   [deleteTodo]: deleteTodoHandler,
   [setFilter]: setFilterHandler,
   [toggleTodoDone]: toggleTodoDoneHandler
 });
-
-export default module;

@@ -3,7 +3,7 @@ import createComponent, {
 } from '../../src';
 
 // actions
-import * as actions from '../modules/app';
+import * as actions from '../modules/app/appActions';
 
 // styles
 import selectors from '../css/components/Todo.css';

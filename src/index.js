@@ -64,7 +64,7 @@ import createSelector from './selectors';
  * @param {HTMLElement} element
  * @param {Object} store
  */
-const render = (Component, element, store) => {
+export const render = (Component, element, store) => {
   ReactRender((
     <Provider store={store}>
       {Component}
@@ -108,7 +108,6 @@ export {withRouter};
 
 export {React};
 export {findDOMNode};
-export {render};
 export {React as jsx};
 
 export {createSelector};

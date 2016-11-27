@@ -19,7 +19,7 @@ import {
  * @param {function|string} property
  * @returns {function(Object): *}
  */
-const createIdentitySelector = (property) => {
+export const createIdentitySelector = (property) => {
   if (isFunction(property)) {
     return property;
   }
@@ -37,7 +37,7 @@ const createIdentitySelector = (property) => {
  * @param {*} value
  * @returns {*}
  */
-const getIdentityValue = (value) => {
+export const getIdentityValue = (value) => {
   return value;
 };
 
@@ -47,7 +47,7 @@ const getIdentityValue = (value) => {
  * @param {Array<string>} keys
  * @returns {function(Array<*>): Object}
  */
-const getStructuredValue = (keys) => {
+export const getStructuredValue = (keys) => {
   return (...values) => {
     return keys.reduce((structuredValue, key, keyIndex) => {
       structuredValue[key] = values[keyIndex];
@@ -65,7 +65,7 @@ const getStructuredValue = (keys) => {
  * @param {function} getValue
  * @returns {function}
  */
-const getStandardSelector = (paths, selectorGenerator, getValue) => {
+export const getStandardSelector = (paths, selectorGenerator, getValue) => {
   const selectors = paths.map(createIdentitySelector);
 
   return selectorGenerator(selectors, getValue);
@@ -81,7 +81,7 @@ const getStandardSelector = (paths, selectorGenerator, getValue) => {
  * @returns {function}
  */
 /* eslint-enable */
-const getStructuredSelector = ({keys, paths}, selectorGenerator) => {
+export const getStructuredSelector = ({keys, paths}, selectorGenerator) => {
   if (keys.length !== paths.length) {
     throw new ReferenceError('Keys and properties arrays must be the same length.');
   }
@@ -101,7 +101,7 @@ const getStructuredSelector = ({keys, paths}, selectorGenerator) => {
  * @param {function} customMemoizeOptions
  * @returns {function}
  */
-const createSelector = (
+export const createSelector = (
   properties = [],
   getComputedValue = getIdentityValue,
   customMemoize = null,
@@ -121,7 +121,5 @@ const createSelector = (
 
   return getStandardSelector(properties, selectorGenerator, getComputedValue);
 };
-
-export {createSelector};
 
 export default createSelector;

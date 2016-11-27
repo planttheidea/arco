@@ -10,7 +10,9 @@ import {
 
 // constants
 import {
-  STATUS
+  STATUS,
+
+  keys
 } from './constants';
 
 let moduleCache = {};
@@ -148,6 +150,7 @@ const createModule = (namespace) => {
     };
 
     moduleCache[namespace].reducer = reducer;
+    reducer.namespace = namespace;
 
     return reducer;
   };
@@ -175,7 +178,7 @@ const getActionConstants = (namespace) => {
     return {};
   }
 
-  return Object.keys(module.actions).reduce((constants, key) => {
+  return keys(module.actions).reduce((constants, key) => {
     return {
       ...constants,
       [key]: module.actions[key].constantName

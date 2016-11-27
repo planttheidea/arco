@@ -19,7 +19,7 @@ import {
  * @param {Object} options
  * @returns {{lifecycleMethods: Object, localMethods: Object}}
  */
-const getComponentMethods = (options) => {
+export const getComponentMethods = (options) => {
   let lifecycleMethods = {},
     localMethods = {};
 
@@ -45,7 +45,7 @@ const getComponentMethods = (options) => {
  * @param {Array<string>} properties
  * @returns {*}
  */
-const getNestedValueFromObject = (object, properties) => {
+export const getNestedValueFromObject = (object, properties) => {
   const [
     property,
     ...restOfProperties
@@ -69,7 +69,7 @@ const getNestedValueFromObject = (object, properties) => {
  * @param {Object} methods
  * @returns {Object}
  */
-const getPropsAndMethods = (props, methods) => {
+export const getPropsAndMethods = (props, methods) => {
   return {
     ...props,
     ...methods
@@ -82,7 +82,7 @@ const getPropsAndMethods = (props, methods) => {
  * @param {*} object
  * @returns {boolean}
  */
-const isReactClass = (object) => {
+export const isReactClass = (object) => {
   return Component.isPrototypeOf(object);
 };
 
@@ -92,7 +92,7 @@ const isReactClass = (object) => {
  * @param {*} object
  * @returns {boolean}
  */
-const isReactCompositeComponentWrapper = (object) => {
+export const isReactCompositeComponentWrapper = (object) => {
   return !!(object && object._instance && object._instance.props);
 };
 
@@ -102,7 +102,7 @@ const isReactCompositeComponentWrapper = (object) => {
  * @param {ReactElement} object
  * @returns {boolean}
  */
-const isReactElement = (object) => {
+export const isReactElement = (object) => {
   return !!object && object.$$type === REACT_ELEMENT_TYPE;
 };
 
@@ -112,7 +112,7 @@ const isReactElement = (object) => {
  * @param {*} object
  * @returns {boolean}
  */
-const isReactEvent = (object) => {
+export const isReactEvent = (object) => {
   return !!(object && object.nativeEvent && object.nativeEvent instanceof Event);
 };
 
@@ -121,7 +121,7 @@ const isReactEvent = (object) => {
  *
  * @returns {string}
  */
-const memoizeSerializer = function() {
+export const memoizeSerializer = function() {
   return JSON.stringify(arguments, (name, value) => {
     if (isFunction(value)) {
       return `${value}`;
@@ -145,16 +145,8 @@ const memoizeSerializer = function() {
  * @param {function} fn
  * @returns {function}
  */
-const memoize = (fn) => {
+export const memoize = (fn) => {
   return fastMemoize(fn, {
     serializer: memoizeSerializer
   });
 };
-
-export {getComponentMethods};
-export {getNestedValueFromObject};
-export {getPropsAndMethods};
-export {isReactClass};
-export {isReactEvent};
-export {memoize};
-export {memoizeSerializer};

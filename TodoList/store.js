@@ -2,14 +2,14 @@ import {
   createStore
 } from '../src';
 
-import appModule from './modules/app';
+import appReducer from './modules/app/appReducer';
 import history from './history';
 
-const modules = [
-  appModule
+const reducers = [
+  appReducer
 ];
 
-export default createStore(modules, {
+export default createStore(reducers, {
   history,
   shouldRestoreState: true
 });

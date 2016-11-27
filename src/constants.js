@@ -1,6 +1,6 @@
-const keys = Object.keys;
+export const keys = Object.keys;
 
-const REACT_LIFECYCLE_METHODS = {
+export const REACT_LIFECYCLE_METHODS = {
   componentWillMount: 1,
   componentDidMount: 2,
   componentWillReceiveProps: 3,
@@ -10,19 +10,12 @@ const REACT_LIFECYCLE_METHODS = {
   componentWillUnmount: 7
 };
 
-const REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) || 0xeac7;
+export const REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) || 0xeac7;
 
-const ARCO_STATE_KEY = '@@arco-state';
+export const ARCO_STATE_KEY = '@@arco-state';
 
-const STATUS = {
+export const STATUS = {
   ERROR: 'ERROR',
   PENDING: 'PENDING',
   SUCCESS: 'SUCCESS'
 };
-
-export {keys};
-
-export {ARCO_STATE_KEY};
-export {REACT_ELEMENT_TYPE};
-export {REACT_LIFECYCLE_METHODS};
-export {STATUS};

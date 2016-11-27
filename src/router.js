@@ -37,7 +37,7 @@ const HISTORY_TYPES = {
  * @param {Object} memoryHisoryOptions
  * @returns {Object}
  */
-const createHistory = (createHistory = HISTORY_TYPES.BROWSER, memoryHisoryOptions) => {
+export const createHistory = (createHistory = HISTORY_TYPES.BROWSER, memoryHisoryOptions) => {
   if (createHistory === HISTORY_TYPES.BROWSER) {
     return browserHistory;
   }
@@ -74,7 +74,6 @@ export {Router};
 export {RouterContext};
 export {applyRouterMiddleware};
 export {createRoutes};
-export {createHistory};
 export {formatPattern};
 export {locationShape};
 export {match};

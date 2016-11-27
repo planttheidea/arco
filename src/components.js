@@ -30,7 +30,7 @@ import {
  * @param {Object} options
  * @returns {Component}
  */
-const getStatefulComponent = (PassedComponent, options) => {
+export const getStatefulComponent = (PassedComponent, options) => {
   const {
     contextTypes,
     mapDispatchToProps,
@@ -69,7 +69,7 @@ const getStatefulComponent = (PassedComponent, options) => {
  * @param {Object} options
  * @returns {Component}
  */
-const getStatelessComponent = (PassedComponent, options) => {
+export const getStatelessComponent = (PassedComponent, options) => {
   const {
     childContextTypes,
     contextTypes,
@@ -203,7 +203,7 @@ const getStatelessComponent = (PassedComponent, options) => {
  * @param {Object} options={}
  * @returns {Component|function(Component): Component}
  */
-const createComponent = (PassedComponent, options = {}) => {
+export const createComponent = (PassedComponent, options = {}) => {
   if (isReactClass(PassedComponent)) {
     return getStatefulComponent(PassedComponent, options);
   }
@@ -211,7 +211,6 @@ const createComponent = (PassedComponent, options = {}) => {
   return getStatelessComponent(PassedComponent, options);
 };
 
-export {createComponent};
 export {ReactComponent as StatefulComponent};
 
 export default createComponent;
