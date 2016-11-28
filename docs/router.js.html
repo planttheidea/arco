@@ -37,6 +37,13 @@
 				</ul>
 			</li>
 			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="tutorial-Actions.html">Actions</a></li><li><a href="tutorial-Components.html">Components</a></li><li><a href="tutorial-History.html">History</a></li><li><a href="tutorial-Modules.html">Modules</a></li><li><a href="tutorial-Reducers.html">Reducers</a></li><li><a href="tutorial-Rendering.html">Rendering</a></li><li><a href="tutorial-Router.html">Router</a></li><li><a href="tutorial-Selectors.html">Selectors</a></li><li><a href="tutorial-Store.html">Store</a></li>
+				</ul>
+			</li>
+			
 		</ul>
         
             <div class="col-sm-3 col-md-3">
@@ -113,6 +120,7 @@ const HISTORY_TYPES = {
  * pass the internal react-router pieces necessary to build a custom history
  *
  * @example
+ * import createHashHistory from 'history/lib/createHashHistory';
  * import {
  *  createHistory
  * } from 'arco';
@@ -122,8 +130,8 @@ const HISTORY_TYPES = {
  * const history = createHistory('browser');
  *
  * // or with a custom function
- * const history = createHistory(({hashHistory, useRouterHistory}) => {
- *  return useRouterHistory(hashHistory)({
+ * const history = createHistory((useRouterHistory) => {
+ *  return useRouterHistory(createHashHistory)({
  *    queryKey: false
  *  });
  * });
@@ -146,14 +154,7 @@ export const createHistory = (history = HISTORY_TYPES.BROWSER, memoryHistoryOpti
   }
 
   if (isFunction(history)) {
-    return history({
-      browserHistory,
-      createMemoryHistory,
-      formatPattern,
-      hashHistory,
-      match,
-      useRouterHistory
-    });
+    return history(useRouterHistory);
   }
 
   throw new ReferenceError('History does not match any known values, and you are not attempting to create' +

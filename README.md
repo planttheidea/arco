@@ -22,82 +22,50 @@ The following packages are all included as part of `arco`:
 * [redux-thunk](https://github.com/gaearon/redux-thunk) for asynchronous actions (optional)
 * [reselect](https://github.com/reactjs/reselect) for memoized selectors
 
+Additionally, the following concepts are applied through convention:
+* [ducks](https://github.com/erikras/ducks-modular-redux) for encapsulated functionality modules of actions / reducer
+* [flux-standard-action](https://github.com/acdlite/flux-standard-action) for formatting of actions in a standard way
+
 `arco` provides a layer of abstraction over the use of these so that you can focus on implementation, but with the same sort of flexibility you would expect from each of these packages directly. Think of it as convention **with** configuration.
 
 Additionally, keeping in line with `redux`, there is a focus on *immutability* and *pure functions*. Notice in the usage example below that `App` has lifecycle methods and an instance method with access to props even though it is a functional component. This is explained more in detail below.
 
-#### Usage
+#### Building an app
 
-A full application (with store, actions, and reducer) in 64 lines:
+You can find tutorials on how to create each aspect of an `arco` app in the "Tutorials" section, or select from below:
 
-```javascript
-import createComponent, {
-  createHistory,
-  createModule,
-  createStore,
-  render
-} from 'arco';
+* [Actions](http://planttheidea.github.io/arco/tutorial-Actions.html): actions consumed by your `redux` store (based on `redux-actions`)
+* [Components](http://planttheidea.github.io/arco/tutorial-Components.html): `react` components that are connected to your store and enhanced by 
+the use of pure functions
+* [History](http://planttheidea.github.io/arco/tutorial-History.html): history used with `react-router` for the single-page application
+* [Modules](http://planttheidea.github.io/arco/tutorial-Modules.html): encapsulated modules that contain `redux` actions and a reducer to manage
+them (based on )
+* [Reducers](http://planttheidea.github.io/arco/tutorial-Reducers.html): reducer that contains state of a specific topic in your `redux` store
+* [Rendering](http://planttheidea.github.io/arco/tutorial-Rendering.html): rendering your `react` views into the DOM
+* [Router](http://planttheidea.github.io/arco/tutorial-Router.html): render your `react` views active in the route (based on `react-router`)
+* [Selectors](http://planttheidea.github.io/arco/tutorial-Selectors.html): memoized selectors for computed data to keep your stored state small (based on `reselect`)
+* [Store](http://planttheidea.github.io/arco/tutorial-Store.html): your `redux` store which encompasses the state of your entire application
 
-// create a module
-const appModule = createModule('app');
+#### Contributing
 
-// create actions for that module
-const increaseCount = appModule.createAction('INCREASE_COUNT', (currentCount) => {
-  return currentCount + 1;
-});
+This project is in its infancy, and many more expansion capabilities are there:
+* Universal app setup
+* Predefined webpack / ESLint / Babel config
+* CLI interface to automate creation of app scaffold
 
-// create a reducer for that module
-const reducer = appModule.createReducer({count: 0}, {
-  [increaseCount](state, {payload}) {
-    return {
-      ...state,
-      count: payload
-    };
-  }
-});
+I welcome [any and all ideas](https://github.com/planttheidea/arco/issues), but especially PRs.
 
-// create your component
-const App = ({count, onClickButton}) => {
-  return (
-    <main>
-      <div>
-        Current count: {count}
-      </div>
-      
-      <button
-        onClick={onClickButton}
-        type="button"
-      >
-        Click to increase the count
-      </button>
-    </main>
-  );
-};
+#### Development
 
-// give it options
-const ConnectedApp = createComponent(App, {
-    mapStateToProps({app}) {
-      return app; 
-    },
-    mapDispatchToProps: {
-      increaseCount
-    },
-    onClickButton(e, {count, increaseCount}) {
-      increaseCount(count);
-    }
-});
-
-// create your store
-const store = createStore([appModule], {
-  history: createHistory()
-});
-
-// render
-render((
-  <App/>
-), document.body, store);
-```
-
-The biggest change from what you are used to is probably the options we pass to create `ConnectedApp`. Internally, `arco` creates lifecycle and standard methods where the props and context are passed in as parameters to the method (rather than accessing them through the *this* reference to the instance). This allows you to write your lifecycle and instance methods as pure functions, making them both more testable and free of side effects.
-
-The full range of options is covered on the [documentation site](http://planttheidea.github.io/acro).
+Standard stuff, clone the repo and `npm install` dependencies. The npm scripts available:
+* `build` => run webpack to build crio.js with NODE_ENV=development
+* `build:minifed` => run webpack to build crio.min.js with NODE_ENV=production
+* `dev` => run webpack dev server to run example app (playground!)
+* `dist` => runs `build` and `build-minified`
+* `docs` => builds the docs via `jsdoc`
+* `lint` => run ESLint against all files in the `src` folder
+* `prepublish` => runs `compile-for-publish`
+* `prepublish:compile` => run `lint`, `test`, `transpile`, `dist`
+* `test` => run AVA test functions with `NODE_ENV=test`
+* `test:watch` => same as `test`, but runs persistent watcher
+* `transpile` => run babel against all files in `src` to create files in `lib`

@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>arco Source: selectors.js</title>
+	<title>arco Tutorial: Actions</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -70,189 +70,81 @@
 	<div class="col-md-12">
 	
 		<div id="main">
-			
+			<section class="tutorial-section">
 
-		<h1 class="page-title">Source: selectors.js</h1>
+<header>
     
-<section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">// external dependencies
-import isArray from 'lodash/isArray';
-import isFunction from 'lodash/isFunction';
-import isPlainObject from 'lodash/isPlainObject';
-import toPath from 'lodash/toPath';
-import {
-  createSelector as createReselectSelector,
-  createSelectorCreator
-} from 'reselect';
 
-// utils
-import {
-  getNestedValueFromObject
-} from './utils';
+    <h2>Actions</h2>
+</header>
 
-/**
- * @module selectors
- */
+<article>
+    <p>Actions are <a href="https://github.com/acdlite/flux-standard-action">Flux Standard Actions</a> produced with the scoping of the namespace of the module applied. The creation and use of them is based off of <a href="https://github.com/acdlite/redux-actions">redux-actions</a>.</p>
+<ul>
+<li><a href="#simple-synchronous-actions">Simple synchronomous actions</a></li>
+<li><a href="#synchronous-actions-with-payload-transformation">Synchronomous actions with payload transformation</a></li>
+<li><a href="#passing-metadata">Passing metadata</a></li>
+<li><a href="#asynchronous-actions">Asynchronomous actions</a></li>
+</ul>
+<h4 id="simple-synchronous-actions">Simple synchronous actions</h4>
+<p>For a synchronous action that simply passes the parameter passed through as payload, action creation is very easy:</p>
+<pre class="prettyprint source lang-javascript"><code>import module from 'modules/app';
 
-/**
- * @private
- *
- * @function createIdentitySelector
- *
- * @description
- * create selector to retrieve identity based on deeply-nested values
- *
- * @param {function|string} property property string to convert to nested path
- * @returns {function(Object): *}
- */
-export const createIdentitySelector = (property) => {
-  if (isFunction(property)) {
-    return property;
-  }
+const action = module.createAction('FOO');</code></pre><h4 id="synchronous-actions-with-payload-transformation">Synchronous actions with payload transformation</h4>
+<p>If you want to manipulate the payload prior to dispatch, provide the transformation method as the second parameter:</p>
+<pre class="prettyprint source lang-javascript"><code>import module from 'modules/app';
 
-  const pathProperties = toPath(property);
-
-  return (passedState) => {
-    return getNestedValueFromObject(passedState, pathProperties);
+const action = module.createAction('FOO', (data) => {
+  return {
+    data
   };
-};
+});</code></pre><h4 id="passing-metadata">Passing metadata</h4>
+<p>If you want to provide additional data that is separate from the payload, pass a third function to the method:</p>
+<pre class="prettyprint source lang-javascript"><code>import module from 'modules/app';
 
-/**
- * @private
- *
- * @function getIdentityValue
- *
- * @description
- * pass-through function to return the value passed to it
- *
- * @param {*} value value to pass through
- * @returns {*}
- */
-export const getIdentityValue = (value) => {
-  return value;
-};
-
-/**
- * @private
- *
- * @function getStructuredValue
- *
- * @description
- * build a structured value to return for structured selectors
- *
- * @param {Array&lt;string>} keys array of keys to use for values in structured selector
- * @returns {function(Array&lt;*>): Object}
- */
-export const getStructuredValue = (keys) => {
-  return (...values) => {
-    return keys.reduce((structuredValue, key, keyIndex) => {
-      structuredValue[key] = values[keyIndex];
-
-      return structuredValue;
-    }, {});
+// undefined second parameter means that the pass-through method from the simple action creation is used for payload
+const action = module.createAction('FOO', undefined, (data) => {
+  return {
+    hasData: !!data
   };
-};
+});</code></pre><p>The <code>meta</code> function will receive the same parameters as the <code>payload</code> function.</p>
+<h4 id="asynchronous-actions">Asynchronous actions</h4>
+<p>Async actions are a little different, in that they basically serve as a creator of three separate actions for the status of the method. Example:</p>
+<pre class="prettyprint source lang-javascript"><code>import {
+  get
+} from 'arco';
 
-/**
- * @private
- *
- * @function getStandardSelector
- *
- * @description
- * get the standard selector type (single value)
- *
- * @param {Array&lt;string>} paths array of strings denoting nested paths of values in state
- * @param {function} selectorGenerator method to use for generating selector
- * @param {function} getValue method to use for computing the value to return
- * @returns {function}
- */
-export const getStandardSelector = (paths, selectorGenerator, getValue) => {
-  const selectors = paths.map(createIdentitySelector);
+import module from 'modules/app';
 
-  return selectorGenerator(selectors, getValue);
-};
+const action = module.createAsyncAction('FOO', (lifecycle, data) => {
+  const {
+    onError,
+    onRequest,
+    onSuccess
+  } = lifecycle;
 
-/* eslint-disable valid-jsdoc */
-/**
- * @private
- *
- * @function getStructuredSelector
- *
- * @description
- * get the structured selector based on the properties passed
- *
- * @param {Array&lt;string>} keys array of keys to use for values in structured selector
- * @param {Array&lt;string>} paths array of strings denoting nested paths to use for values in structured selector
- * @param {function} selectorGenerator method to use for generating selector
- * @returns {function}
- */
-/* eslint-enable */
-export const getStructuredSelector = ({keys, paths}, selectorGenerator) => {
-  if (keys.length !== paths.length) {
-    throw new ReferenceError('Keys and properties arrays must be the same length.');
-  }
+  // example with redux-thunk
+  return async (dispatch) => {
+    dispatch(onRequest());
 
-  const selectors = paths.map(createIdentitySelector);
+    try {
+      const response = await get('/foo');
 
-  return selectorGenerator(selectors, getStructuredValue(keys));
-};
+      dispatch(onSuccess(response.data));
+    } catch (error) {
+      dispatch(onError(error));
+    }
+  };
+});</code></pre><p>Notice the <code>lifecycle</code> parameter is injected, which includes the actions to dispatch with the <code>status</code> of the call.</p>
+<ul>
+<li><code>onRequest</code> dispatches an action with <code>meta</code> set to <code>{status: 'PENDING'}</code></li>
+<li><code>onSuccess</code> dispatches an action with <code>meta</code> set to <code>{status: 'SUCCESS'}</code></li>
+<li><code>onError</code> dispatches an action with <code>meta</code> set to <code>{status: 'ERROR'}</code></li>
+</ul>
+<p>In all three cases, any parameter passed to the action is the <code>payload</code>.</p>
+</article>
 
-/**
- * @function createSelector
- *
- * @description
- * based on the array of properties and the reducer passed
- * create a selector
- *
- * @example
- * import {
- *  createSelector
- * } from 'arco';
- *
- * const hasBaz = createSelector(['foo.bar[0].baz'], (baz) => {
- *  return !!baz;
- * });
- *
- * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true
- * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true, pulled from cache
- *
- * @param {Array&lt;string>|{keys: Array&lt;string>, paths: Array&lt;string>}} properties properties to retrieve from state
- * @param {function} [getComputedValue=getIdentityValue] method for getting the computed value from the properties
- * @param {function} [customMemoize=null] custom memoizer function to use in place of the default
- * @param {function} [customMemoizeOptions=null] additional options for using the custom memoizer option
- * @returns {function}
- */
-export const createSelector = (
-  properties = [],
-  getComputedValue = getIdentityValue,
-  customMemoize = null,
-  customMemoizeOptions = null
-) => {
-  const selectorGenerator = isFunction(customMemoize)
-    ? createSelectorCreator(customMemoize, ...customMemoizeOptions)
-    : createReselectSelector;
-
-  if (isPlainObject(properties)) {
-    return getStructuredSelector(properties, selectorGenerator);
-  }
-
-  if (!isArray(properties)) {
-    throw new TypeError('Properties passed must be either an object of keys and paths or an array of paths.');
-  }
-
-  return getStandardSelector(properties, selectorGenerator, getComputedValue);
-};
-
-export default createSelector;
-</pre>
-    </article>
 </section>
-
-
-
-
 
 		</div>
 	</div>

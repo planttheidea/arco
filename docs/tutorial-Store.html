@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>arco Source: selectors.js</title>
+	<title>arco Tutorial: Store</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -70,189 +70,61 @@
 	<div class="col-md-12">
 	
 		<div id="main">
-			
+			<section class="tutorial-section">
 
-		<h1 class="page-title">Source: selectors.js</h1>
+<header>
     
-<section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">// external dependencies
-import isArray from 'lodash/isArray';
-import isFunction from 'lodash/isFunction';
-import isPlainObject from 'lodash/isPlainObject';
-import toPath from 'lodash/toPath';
-import {
-  createSelector as createReselectSelector,
-  createSelectorCreator
-} from 'reselect';
 
-// utils
-import {
-  getNestedValueFromObject
-} from './utils';
+    <h2>Store</h2>
+</header>
 
-/**
- * @module selectors
- */
+<article>
+    <p>The store receives an array of either reducers or full modules, and also accepts a number of options to automatically enhance the store. </p>
+<ul>
+<li><a href="#options">Options</a><ul>
+<li><a href="#autorestore">autoRestore</a></li>
+<li><a href="#history">history</a></li>
+<li><a href="#initialstate">initialState</a></li>
+<li><a href="#middlewares">middlewares</a></li>
+<li><a href="#thunk">thunk</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>import {
+  createHistory,
+  createStore
+} from 'arco';
 
-/**
- * @private
- *
- * @function createIdentitySelector
- *
- * @description
- * create selector to retrieve identity based on deeply-nested values
- *
- * @param {function|string} property property string to convert to nested path
- * @returns {function(Object): *}
- */
-export const createIdentitySelector = (property) => {
-  if (isFunction(property)) {
-    return property;
-  }
+import appReducer from 'modules/app/appReducer';
+import fooModule from 'modules/foo';
 
-  const pathProperties = toPath(property);
+// array can either have reducers or full modules
+const modules = [
+  appReducer,
+  fooModule
+];
 
-  return (passedState) => {
-    return getNestedValueFromObject(passedState, pathProperties);
-  };
-};
+export default createStore(modules, {
+  history: createHistory()
+});</code></pre><h2 id="options">Options</h2>
+<h4 id="autorestore">autoRestore</h4>
+<p><em>boolean, defaults to false</em></p>
+<p>If set to true, will store the complete state in <code>sessionStorage</code> on <code>beforeunload</code>, and restore from <code>sessionStorage</code> on load if it exists.</p>
+<h4 id="history">history</h4>
+<p><em>Object</em></p>
+<p>Accepts the history object generated from <code>createHistory</code>, which is explained in more detail in <a href="http://planttheidea.github.io/arco/tutorial-History.html">the History tutorial</a>.</p>
+<h4 id="initialstate">initialState</h4>
+<p><em>Object, defaults to {}</em></p>
+<p>State to apply to the store by default (equivalent to <code>preloadedState</code> in <code>redux</code>).</p>
+<h4 id="middlewares">middlewares</h4>
+<p><em>Array<function>, defaults to []</em></p>
+<p>Middlewares to apply to the store (equivalent to <code>enhancers</code> in <code>redux</code>). If <code>thunk</code> is set to <code>true</code>, then <code>redux-thunk</code> will be automatically included.</p>
+<h4 id="thunk">thunk</h4>
+<p><em>boolean, defaults to true</em></p>
+<p>If set to false, will prevent the addition of <code>redux-thunk</code> in the list of middlewares applied to the store.</p>
+</article>
 
-/**
- * @private
- *
- * @function getIdentityValue
- *
- * @description
- * pass-through function to return the value passed to it
- *
- * @param {*} value value to pass through
- * @returns {*}
- */
-export const getIdentityValue = (value) => {
-  return value;
-};
-
-/**
- * @private
- *
- * @function getStructuredValue
- *
- * @description
- * build a structured value to return for structured selectors
- *
- * @param {Array&lt;string>} keys array of keys to use for values in structured selector
- * @returns {function(Array&lt;*>): Object}
- */
-export const getStructuredValue = (keys) => {
-  return (...values) => {
-    return keys.reduce((structuredValue, key, keyIndex) => {
-      structuredValue[key] = values[keyIndex];
-
-      return structuredValue;
-    }, {});
-  };
-};
-
-/**
- * @private
- *
- * @function getStandardSelector
- *
- * @description
- * get the standard selector type (single value)
- *
- * @param {Array&lt;string>} paths array of strings denoting nested paths of values in state
- * @param {function} selectorGenerator method to use for generating selector
- * @param {function} getValue method to use for computing the value to return
- * @returns {function}
- */
-export const getStandardSelector = (paths, selectorGenerator, getValue) => {
-  const selectors = paths.map(createIdentitySelector);
-
-  return selectorGenerator(selectors, getValue);
-};
-
-/* eslint-disable valid-jsdoc */
-/**
- * @private
- *
- * @function getStructuredSelector
- *
- * @description
- * get the structured selector based on the properties passed
- *
- * @param {Array&lt;string>} keys array of keys to use for values in structured selector
- * @param {Array&lt;string>} paths array of strings denoting nested paths to use for values in structured selector
- * @param {function} selectorGenerator method to use for generating selector
- * @returns {function}
- */
-/* eslint-enable */
-export const getStructuredSelector = ({keys, paths}, selectorGenerator) => {
-  if (keys.length !== paths.length) {
-    throw new ReferenceError('Keys and properties arrays must be the same length.');
-  }
-
-  const selectors = paths.map(createIdentitySelector);
-
-  return selectorGenerator(selectors, getStructuredValue(keys));
-};
-
-/**
- * @function createSelector
- *
- * @description
- * based on the array of properties and the reducer passed
- * create a selector
- *
- * @example
- * import {
- *  createSelector
- * } from 'arco';
- *
- * const hasBaz = createSelector(['foo.bar[0].baz'], (baz) => {
- *  return !!baz;
- * });
- *
- * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true
- * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true, pulled from cache
- *
- * @param {Array&lt;string>|{keys: Array&lt;string>, paths: Array&lt;string>}} properties properties to retrieve from state
- * @param {function} [getComputedValue=getIdentityValue] method for getting the computed value from the properties
- * @param {function} [customMemoize=null] custom memoizer function to use in place of the default
- * @param {function} [customMemoizeOptions=null] additional options for using the custom memoizer option
- * @returns {function}
- */
-export const createSelector = (
-  properties = [],
-  getComputedValue = getIdentityValue,
-  customMemoize = null,
-  customMemoizeOptions = null
-) => {
-  const selectorGenerator = isFunction(customMemoize)
-    ? createSelectorCreator(customMemoize, ...customMemoizeOptions)
-    : createReselectSelector;
-
-  if (isPlainObject(properties)) {
-    return getStructuredSelector(properties, selectorGenerator);
-  }
-
-  if (!isArray(properties)) {
-    throw new TypeError('Properties passed must be either an object of keys and paths or an array of paths.');
-  }
-
-  return getStandardSelector(properties, selectorGenerator, getComputedValue);
-};
-
-export default createSelector;
-</pre>
-    </article>
 </section>
-
-
-
-
 
 		</div>
 	</div>

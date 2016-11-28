@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>arco Source: selectors.js</title>
+	<title>arco Tutorial: History</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -70,189 +70,50 @@
 	<div class="col-md-12">
 	
 		<div id="main">
-			
+			<section class="tutorial-section">
 
-		<h1 class="page-title">Source: selectors.js</h1>
+<header>
     
-<section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">// external dependencies
-import isArray from 'lodash/isArray';
-import isFunction from 'lodash/isFunction';
-import isPlainObject from 'lodash/isPlainObject';
-import toPath from 'lodash/toPath';
+
+    <h2>History</h2>
+</header>
+
+<article>
+    <p>Creating a history object is useful if your application uses routing (which most do). As such, <code>arco</code> makes the creation of various types of history as painless as possible:</p>
+<ul>
+<li><a href="#standard">Standard</a></li>
+<li><a href="#custom">Custom</a></li>
+</ul>
+<h4 id="standard">Standard</h4>
+<p>For most applications, use of a standard history is sufficient for routing.</p>
+<pre class="prettyprint source lang-javascript"><code>import {
+  createHistory
+} from 'arco';
+
+export default createHistory('hash');</code></pre><p>There are three types of standard histories:</p>
+<ul>
+<li><a href="https://github.com/ReactTraining/react-router/blob/master/docs/API.md#browserhistory">browser</a> (default) = HTML5 History API, using clean URLs and <code>pushState</code> (Modern browsers)</li>
+<li><a href="https://github.com/ReactTraining/react-router/blob/master/docs/API.md#hashhistory">hash</a> = Include hash in URL (IE9-)</li>
+<li><a href="https://github.com/ReactTraining/react-router/blob/master/docs/API.md#creatememoryhistoryoptions">memory</a> = In-memory history that does not interact with the browser URL<ul>
+<li>Can also pass a second parameter of <code>options</code> to <code>createHistory</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="custom">Custom</h4>
+<p>In the case you want to use a custom history, you can instead pass a function to <code>createHistory</code> and return your own:</p>
+<pre class="prettyprint source lang-javascript"><code>import createHashHistory from 'history/lib/createHashHistory';
 import {
-  createSelector as createReselectSelector,
-  createSelectorCreator
-} from 'reselect';
+  createHistory
+} from 'arco';
 
-// utils
-import {
-  getNestedValueFromObject
-} from './utils';
+export default createHistory((useRouterHistory) => {
+  return useRouterHistory(createHashHistory)({
+    queryKey: false
+  });
+});</code></pre>
+</article>
 
-/**
- * @module selectors
- */
-
-/**
- * @private
- *
- * @function createIdentitySelector
- *
- * @description
- * create selector to retrieve identity based on deeply-nested values
- *
- * @param {function|string} property property string to convert to nested path
- * @returns {function(Object): *}
- */
-export const createIdentitySelector = (property) => {
-  if (isFunction(property)) {
-    return property;
-  }
-
-  const pathProperties = toPath(property);
-
-  return (passedState) => {
-    return getNestedValueFromObject(passedState, pathProperties);
-  };
-};
-
-/**
- * @private
- *
- * @function getIdentityValue
- *
- * @description
- * pass-through function to return the value passed to it
- *
- * @param {*} value value to pass through
- * @returns {*}
- */
-export const getIdentityValue = (value) => {
-  return value;
-};
-
-/**
- * @private
- *
- * @function getStructuredValue
- *
- * @description
- * build a structured value to return for structured selectors
- *
- * @param {Array&lt;string>} keys array of keys to use for values in structured selector
- * @returns {function(Array&lt;*>): Object}
- */
-export const getStructuredValue = (keys) => {
-  return (...values) => {
-    return keys.reduce((structuredValue, key, keyIndex) => {
-      structuredValue[key] = values[keyIndex];
-
-      return structuredValue;
-    }, {});
-  };
-};
-
-/**
- * @private
- *
- * @function getStandardSelector
- *
- * @description
- * get the standard selector type (single value)
- *
- * @param {Array&lt;string>} paths array of strings denoting nested paths of values in state
- * @param {function} selectorGenerator method to use for generating selector
- * @param {function} getValue method to use for computing the value to return
- * @returns {function}
- */
-export const getStandardSelector = (paths, selectorGenerator, getValue) => {
-  const selectors = paths.map(createIdentitySelector);
-
-  return selectorGenerator(selectors, getValue);
-};
-
-/* eslint-disable valid-jsdoc */
-/**
- * @private
- *
- * @function getStructuredSelector
- *
- * @description
- * get the structured selector based on the properties passed
- *
- * @param {Array&lt;string>} keys array of keys to use for values in structured selector
- * @param {Array&lt;string>} paths array of strings denoting nested paths to use for values in structured selector
- * @param {function} selectorGenerator method to use for generating selector
- * @returns {function}
- */
-/* eslint-enable */
-export const getStructuredSelector = ({keys, paths}, selectorGenerator) => {
-  if (keys.length !== paths.length) {
-    throw new ReferenceError('Keys and properties arrays must be the same length.');
-  }
-
-  const selectors = paths.map(createIdentitySelector);
-
-  return selectorGenerator(selectors, getStructuredValue(keys));
-};
-
-/**
- * @function createSelector
- *
- * @description
- * based on the array of properties and the reducer passed
- * create a selector
- *
- * @example
- * import {
- *  createSelector
- * } from 'arco';
- *
- * const hasBaz = createSelector(['foo.bar[0].baz'], (baz) => {
- *  return !!baz;
- * });
- *
- * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true
- * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true, pulled from cache
- *
- * @param {Array&lt;string>|{keys: Array&lt;string>, paths: Array&lt;string>}} properties properties to retrieve from state
- * @param {function} [getComputedValue=getIdentityValue] method for getting the computed value from the properties
- * @param {function} [customMemoize=null] custom memoizer function to use in place of the default
- * @param {function} [customMemoizeOptions=null] additional options for using the custom memoizer option
- * @returns {function}
- */
-export const createSelector = (
-  properties = [],
-  getComputedValue = getIdentityValue,
-  customMemoize = null,
-  customMemoizeOptions = null
-) => {
-  const selectorGenerator = isFunction(customMemoize)
-    ? createSelectorCreator(customMemoize, ...customMemoizeOptions)
-    : createReselectSelector;
-
-  if (isPlainObject(properties)) {
-    return getStructuredSelector(properties, selectorGenerator);
-  }
-
-  if (!isArray(properties)) {
-    throw new TypeError('Properties passed must be either an object of keys and paths or an array of paths.');
-  }
-
-  return getStandardSelector(properties, selectorGenerator, getComputedValue);
-};
-
-export default createSelector;
-</pre>
-    </article>
 </section>
-
-
-
-
 
 		</div>
 	</div>

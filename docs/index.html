@@ -37,6 +37,13 @@
 				</ul>
 			</li>
 			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="tutorial-Actions.html">Actions</a></li><li><a href="tutorial-Components.html">Components</a></li><li><a href="tutorial-History.html">History</a></li><li><a href="tutorial-Modules.html">Modules</a></li><li><a href="tutorial-Reducers.html">Reducers</a></li><li><a href="tutorial-Rendering.html">Rendering</a></li><li><a href="tutorial-Router.html">Router</a></li><li><a href="tutorial-Selectors.html">Selectors</a></li><li><a href="tutorial-Store.html">Store</a></li>
+				</ul>
+			</li>
+			
 		</ul>
         
             <div class="col-sm-3 col-md-3">
@@ -88,8 +95,11 @@
 
 
     <section class="readme-section">
-        <article><h1>arco</h1><p>A React+Redux framework to ease the fatigue</p>
-<h4>Installation</h4><pre class="prettyprint source"><code>$ npm i arco --save</code></pre><h4>Summary</h4><p><code>arco</code> is a framework designed to streamline a lot of the architectural configuration of a React application by providing several web-standard packages built-in, as well as an API that is built to keep boilerplate minimal.</p>
+        <article><h1 id="arco">arco</h1>
+<p>A React+Redux framework to ease the fatigue</p>
+<h4 id="installation">Installation</h4>
+<pre class="prettyprint source"><code>$ npm i arco --save</code></pre><h4 id="summary">Summary</h4>
+<p><code>arco</code> is a framework designed to streamline a lot of the architectural configuration of a React application by providing several web-standard packages built-in, as well as an API that is built to keep boilerplate minimal.</p>
 <p>The following packages are all included as part of <code>arco</code>:</p>
 <ul>
 <li><a href="https://github.com/facebook/react">react</a> for views</li>
@@ -101,75 +111,51 @@
 <li><a href="https://github.com/gaearon/redux-thunk">redux-thunk</a> for asynchronous actions (optional)</li>
 <li><a href="https://github.com/reactjs/reselect">reselect</a> for memoized selectors</li>
 </ul>
+<p>Additionally, the following concepts are applied through convention:</p>
+<ul>
+<li><a href="https://github.com/erikras/ducks-modular-redux">ducks</a> for encapsulated functionality modules of actions / reducer</li>
+<li><a href="https://github.com/acdlite/flux-standard-action">flux-standard-action</a> for formatting of actions in a standard way</li>
+</ul>
 <p><code>arco</code> provides a layer of abstraction over the use of these so that you can focus on implementation, but with the same sort of flexibility you would expect from each of these packages directly. Think of it as convention <strong>with</strong> configuration.</p>
 <p>Additionally, keeping in line with <code>redux</code>, there is a focus on <em>immutability</em> and <em>pure functions</em>. Notice in the usage example below that <code>App</code> has lifecycle methods and an instance method with access to props even though it is a functional component. This is explained more in detail below.</p>
-<h4>Usage</h4><p>A full application (with store, actions, and reducer) in 64 lines:</p>
-<pre class="prettyprint source lang-javascript"><code>import createComponent, {
-  createHistory,
-  createModule,
-  createStore,
-  render
-} from 'arco';
-
-// create a module
-const appModule = createModule('app');
-
-// create actions for that module
-const increaseCount = appModule.createAction('INCREASE_COUNT', (currentCount) => {
-  return currentCount + 1;
-});
-
-// create a reducer for that module
-const reducer = appModule.createReducer({count: 0}, {
-  [increaseCount](state, {payload}) {
-    return {
-      ...state,
-      count: payload
-    };
-  }
-});
-
-// create your component
-const App = ({count, onClickButton}) => {
-  return (
-    &lt;main>
-      &lt;div>
-        Current count: {count}
-      &lt;/div>
-
-      &lt;button
-        onClick={onClickButton}
-        type=&quot;button&quot;
-      >
-        Click to increase the count
-      &lt;/button>
-    &lt;/main>
-  );
-};
-
-// give it options
-const ConnectedApp = createComponent(App, {
-    mapStateToProps({app}) {
-      return app; 
-    },
-    mapDispatchToProps: {
-      increaseCount
-    },
-    onClickButton(e, {count, increaseCount}) {
-      increaseCount(count);
-    }
-});
-
-// create your store
-const store = createStore([appModule], {
-  history: createHistory()
-});
-
-// render
-render((
-  &lt;App/>
-), document.body, store);</code></pre><p>The biggest change from what you are used to is probably the options we pass to create <code>ConnectedApp</code>. Internally, <code>arco</code> creates lifecycle and standard methods where the props and context are passed in as parameters to the method (rather than accessing them through the <em>this</em> reference to the instance). This allows you to write your lifecycle and instance methods as pure functions, making them both more testable and free of side effects.</p>
-<p>The full range of options is covered on the <a href="http://planttheidea.github.io/acro">documentation site</a>.</p></article>
+<h4 id="building-an-app">Building an app</h4>
+<p>You can find tutorials on how to create each aspect of an <code>arco</code> app in the &quot;Tutorials&quot; section, or select from below:</p>
+<ul>
+<li><a href="http://planttheidea.github.io/arco/tutorial-Actions.html">Actions</a>: actions consumed by your <code>redux</code> store (based on <code>redux-actions</code>)</li>
+<li><a href="http://planttheidea.github.io/arco/tutorial-Components.html">Components</a>: <code>react</code> components that are connected to your store and enhanced by 
+the use of pure functions</li>
+<li><a href="http://planttheidea.github.io/arco/tutorial-History.html">History</a>: history used with <code>react-router</code> for the single-page application</li>
+<li><a href="http://planttheidea.github.io/arco/tutorial-Modules.html">Modules</a>: encapsulated modules that contain <code>redux</code> actions and a reducer to manage
+them (based on )</li>
+<li><a href="http://planttheidea.github.io/arco/tutorial-Reducers.html">Reducers</a>: reducer that contains state of a specific topic in your <code>redux</code> store</li>
+<li><a href="http://planttheidea.github.io/arco/tutorial-Rendering.html">Rendering</a>: rendering your <code>react</code> views into the DOM</li>
+<li><a href="http://planttheidea.github.io/arco/tutorial-Router.html">Router</a>: render your <code>react</code> views active in the route (based on <code>react-router</code>)</li>
+<li><a href="http://planttheidea.github.io/arco/tutorial-Selectors.html">Selectors</a>: memoized selectors for computed data to keep your stored state small (based on <code>reselect</code>)</li>
+<li><a href="http://planttheidea.github.io/arco/tutorial-Store.html">Store</a>: your <code>redux</code> store which encompasses the state of your entire application</li>
+</ul>
+<h4 id="contributing">Contributing</h4>
+<p>This project is in its infancy, and many more expansion capabilities are there:</p>
+<ul>
+<li>Universal app setup</li>
+<li>Predefined webpack / ESLint / Babel config</li>
+<li>CLI interface to automate creation of app scaffold</li>
+</ul>
+<p>I welcome <a href="https://github.com/planttheidea/arco/issues">any and all ideas</a>, but especially PRs.</p>
+<h4 id="development">Development</h4>
+<p>Standard stuff, clone the repo and <code>npm install</code> dependencies. The npm scripts available:</p>
+<ul>
+<li><code>build</code> =&gt; run webpack to build crio.js with NODE_ENV=development</li>
+<li><code>build:minifed</code> =&gt; run webpack to build crio.min.js with NODE_ENV=production</li>
+<li><code>dev</code> =&gt; run webpack dev server to run example app (playground!)</li>
+<li><code>dist</code> =&gt; runs <code>build</code> and <code>build-minified</code></li>
+<li><code>docs</code> =&gt; builds the docs via <code>jsdoc</code></li>
+<li><code>lint</code> =&gt; run ESLint against all files in the <code>src</code> folder</li>
+<li><code>prepublish</code> =&gt; runs <code>compile-for-publish</code></li>
+<li><code>prepublish:compile</code> =&gt; run <code>lint</code>, <code>test</code>, <code>transpile</code>, <code>dist</code></li>
+<li><code>test</code> =&gt; run AVA test functions with <code>NODE_ENV=test</code></li>
+<li><code>test:watch</code> =&gt; same as <code>test</code>, but runs persistent watcher</li>
+<li><code>transpile</code> =&gt; run babel against all files in <code>src</code> to create files in <code>lib</code></li>
+</ul></article>
     </section>
 
 

@@ -140,7 +140,7 @@ export const getStructuredSelector = ({keys, paths}, selectorGenerator) => {
  * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true, pulled from cache
  *
  * @param {Array<string>|{keys: Array<string>, paths: Array<string>}} properties properties to retrieve from state
- * @param {function} [getComputedValue=getIdentityValue] method to use for getting the computed value from the properties
+ * @param {function} [getComputedValue=getIdentityValue] method for getting the computed value from the properties
  * @param {function} [customMemoize=null] custom memoizer function to use in place of the default
  * @param {function} [customMemoizeOptions=null] additional options for using the custom memoizer option
  * @returns {function}

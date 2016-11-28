@@ -41,6 +41,7 @@ const HISTORY_TYPES = {
  * pass the internal react-router pieces necessary to build a custom history
  *
  * @example
+ * import createHashHistory from 'history/lib/createHashHistory';
  * import {
  *  createHistory
  * } from 'arco';
@@ -50,8 +51,8 @@ const HISTORY_TYPES = {
  * const history = createHistory('browser');
  *
  * // or with a custom function
- * const history = createHistory(({hashHistory, useRouterHistory}) => {
- *  return useRouterHistory(hashHistory)({
+ * const history = createHistory((useRouterHistory) => {
+ *  return useRouterHistory(createHashHistory)({
  *    queryKey: false
  *  });
  * });
@@ -74,14 +75,7 @@ export const createHistory = (history = HISTORY_TYPES.BROWSER, memoryHistoryOpti
   }
 
   if (isFunction(history)) {
-    return history({
-      browserHistory,
-      createMemoryHistory,
-      formatPattern,
-      hashHistory,
-      match,
-      useRouterHistory
-    });
+    return history(useRouterHistory);
   }
 
   throw new ReferenceError('History does not match any known values, and you are not attempting to create' +

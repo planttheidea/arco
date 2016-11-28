@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>arco Source: selectors.js</title>
+	<title>arco Tutorial: Modules</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -70,189 +70,48 @@
 	<div class="col-md-12">
 	
 		<div id="main">
-			
+			<section class="tutorial-section">
 
-		<h1 class="page-title">Source: selectors.js</h1>
+<header>
     
-<section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">// external dependencies
-import isArray from 'lodash/isArray';
-import isFunction from 'lodash/isFunction';
-import isPlainObject from 'lodash/isPlainObject';
-import toPath from 'lodash/toPath';
-import {
-  createSelector as createReselectSelector,
-  createSelectorCreator
-} from 'reselect';
 
-// utils
-import {
-  getNestedValueFromObject
-} from './utils';
+    <h2>Modules</h2>
+</header>
 
-/**
- * @module selectors
- */
+<article>
+    <p>Modules are the encapsulation of a specific piece of state functionality, meaning the <code>redux</code> reducer that manages a particular piece of state and the actions that update that reducer.</p>
+<p>Creating a module is as simple as calling <code>createModule</code> with a namespace:</p>
+<pre class="prettyprint source lang-javascript"><code>import {
+  createModule
+} from 'arco';
 
-/**
- * @private
- *
- * @function createIdentitySelector
- *
- * @description
- * create selector to retrieve identity based on deeply-nested values
- *
- * @param {function|string} property property string to convert to nested path
- * @returns {function(Object): *}
- */
-export const createIdentitySelector = (property) => {
-  if (isFunction(property)) {
-    return property;
+export default createModule('app');</code></pre><p>You can have as many modules as you need for your application, as they translate one-to-one to the reducers in your store.</p>
+<p>If you are a fan of the <code>ducks</code> pattern, you can include your actions and reducer into a single file very easily:</p>
+<pre class="prettyprint source lang-javascript"><code>import {
+  createModule
+} from 'arco';
+
+const module = createModule('foo');
+
+const action = module.createAction('SET_BAR');
+
+const INITIAL_STATE = {
+  bar: ''
+};
+
+const reducer = module.createReducer(INITIAL_STATE, {
+  [action](state, {payload}) {
+    return {
+      ...state,
+      bar: payload
+    }
   }
+});
 
-  const pathProperties = toPath(property);
+export default module;</code></pre><p>For specifics about creating actions and the reducer from the module, consult the <a href="http://planttheidea.github.io/acro/tutorials-Actions.html">Actions</a> and <a href="http://planttheidea.github.io/acro/tutorials-Reducers.html">Reducers</a> tutorials.</p>
+</article>
 
-  return (passedState) => {
-    return getNestedValueFromObject(passedState, pathProperties);
-  };
-};
-
-/**
- * @private
- *
- * @function getIdentityValue
- *
- * @description
- * pass-through function to return the value passed to it
- *
- * @param {*} value value to pass through
- * @returns {*}
- */
-export const getIdentityValue = (value) => {
-  return value;
-};
-
-/**
- * @private
- *
- * @function getStructuredValue
- *
- * @description
- * build a structured value to return for structured selectors
- *
- * @param {Array&lt;string>} keys array of keys to use for values in structured selector
- * @returns {function(Array&lt;*>): Object}
- */
-export const getStructuredValue = (keys) => {
-  return (...values) => {
-    return keys.reduce((structuredValue, key, keyIndex) => {
-      structuredValue[key] = values[keyIndex];
-
-      return structuredValue;
-    }, {});
-  };
-};
-
-/**
- * @private
- *
- * @function getStandardSelector
- *
- * @description
- * get the standard selector type (single value)
- *
- * @param {Array&lt;string>} paths array of strings denoting nested paths of values in state
- * @param {function} selectorGenerator method to use for generating selector
- * @param {function} getValue method to use for computing the value to return
- * @returns {function}
- */
-export const getStandardSelector = (paths, selectorGenerator, getValue) => {
-  const selectors = paths.map(createIdentitySelector);
-
-  return selectorGenerator(selectors, getValue);
-};
-
-/* eslint-disable valid-jsdoc */
-/**
- * @private
- *
- * @function getStructuredSelector
- *
- * @description
- * get the structured selector based on the properties passed
- *
- * @param {Array&lt;string>} keys array of keys to use for values in structured selector
- * @param {Array&lt;string>} paths array of strings denoting nested paths to use for values in structured selector
- * @param {function} selectorGenerator method to use for generating selector
- * @returns {function}
- */
-/* eslint-enable */
-export const getStructuredSelector = ({keys, paths}, selectorGenerator) => {
-  if (keys.length !== paths.length) {
-    throw new ReferenceError('Keys and properties arrays must be the same length.');
-  }
-
-  const selectors = paths.map(createIdentitySelector);
-
-  return selectorGenerator(selectors, getStructuredValue(keys));
-};
-
-/**
- * @function createSelector
- *
- * @description
- * based on the array of properties and the reducer passed
- * create a selector
- *
- * @example
- * import {
- *  createSelector
- * } from 'arco';
- *
- * const hasBaz = createSelector(['foo.bar[0].baz'], (baz) => {
- *  return !!baz;
- * });
- *
- * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true
- * hasBaz({foo: {bar: [{ baz: 'Here!'}]}}); // true, pulled from cache
- *
- * @param {Array&lt;string>|{keys: Array&lt;string>, paths: Array&lt;string>}} properties properties to retrieve from state
- * @param {function} [getComputedValue=getIdentityValue] method for getting the computed value from the properties
- * @param {function} [customMemoize=null] custom memoizer function to use in place of the default
- * @param {function} [customMemoizeOptions=null] additional options for using the custom memoizer option
- * @returns {function}
- */
-export const createSelector = (
-  properties = [],
-  getComputedValue = getIdentityValue,
-  customMemoize = null,
-  customMemoizeOptions = null
-) => {
-  const selectorGenerator = isFunction(customMemoize)
-    ? createSelectorCreator(customMemoize, ...customMemoizeOptions)
-    : createReselectSelector;
-
-  if (isPlainObject(properties)) {
-    return getStructuredSelector(properties, selectorGenerator);
-  }
-
-  if (!isArray(properties)) {
-    throw new TypeError('Properties passed must be either an object of keys and paths or an array of paths.');
-  }
-
-  return getStandardSelector(properties, selectorGenerator, getComputedValue);
-};
-
-export default createSelector;
-</pre>
-    </article>
 </section>
-
-
-
-
 
 		</div>
 	</div>

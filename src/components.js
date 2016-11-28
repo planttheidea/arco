@@ -211,8 +211,28 @@ export const assignLocalMethods = (component, localMethods) => {
     };
   });
 
-  component.methods.getDOMNode = () => {
-    return findDOMNode(component);
+  /**
+   * @private
+   *
+   * @function getDOMNode
+   *
+   * @description
+   * if a selector is passed get the descendant of the component that matches the selector,
+   * else return the DOM node of the component itself
+   *
+   * @param {string} selector
+   * @returns {HTMLElement|null}
+   */
+  component.methods.getDOMNode = (selector) => {
+    const node = findDOMNode(component);
+
+    if (!selector) {
+      return node;
+    }
+
+    if (node) {
+      return node.querySelector(selector);
+    }
   };
 
   return component;

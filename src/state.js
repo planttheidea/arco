@@ -1,6 +1,5 @@
 // external dependencies
 import isFunction from 'lodash/isFunction';
-import isPlainObject from 'lodash/isPlainObject';
 import isString from 'lodash/isString';
 import noop from 'lodash/noop';
 import {
@@ -15,9 +14,7 @@ import {
 
 // constants
 import {
-  STATUS,
-
-  keys
+  STATUS
 } from './constants';
 
 let moduleCache = {};
@@ -72,45 +69,6 @@ export const asyncSuccessActionCreator = () => {
   return {
     status: STATUS.SUCCESS
   };
-};
-
-/**
- * @function getActionConstants
- *
- * @description
- * get the constants for the actions of a given namespace
- *
- * @example
- * import {
- *  getActionConstants
- * } from 'arco';
- *
- * // use the string namespace value
- * const ACTION_TYPES = getActionContents('app');
- *
- * // or a predefined module
- * const ACTION_TYPES = getActionContents(appModule);
- *
- * @param {Object|string} namespace module or namespace that action constants are a member of
- * @returns {Object}
- */
-export const getActionConstants = (namespace) => {
-  if (isPlainObject(namespace)) {
-    namespace = namespace.namespace;
-  }
-
-  const module = moduleCache[namespace];
-
-  if (!module) {
-    return {};
-  }
-
-  return keys(module.actions).reduce((constants, key) => {
-    return {
-      ...constants,
-      [key]: module.actions[key].constantName
-    };
-  }, {});
 };
 
 /**

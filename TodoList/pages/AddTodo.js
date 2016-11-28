@@ -16,7 +16,7 @@ import selectors from '../css/pages/AddTodo.css';
  * @returns {HTMLElement}
  */
 const getInput = (getDOMNode) => {
-  return getDOMNode().querySelector('input');
+  return getDOMNode('input');
 };
 
 /**

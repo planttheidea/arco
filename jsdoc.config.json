@@ -3,14 +3,16 @@
   "markdown": {
     "excludeTags": [
       "author"
-    ]
+    ],
+    "idInHeadings": true
   },
   "opts": {
     "destination": "./docs",
     "package": "./package.json",
     "readme": "./README.md",
     "recurse": true,
-    "template": "./node_modules/ink-docstrap/template"
+    "template": "./node_modules/ink-docstrap/template",
+    "tutorials": "./tutorials"
   },
   "plugins": [
     "plugins/markdown"

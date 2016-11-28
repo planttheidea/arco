@@ -37,6 +37,13 @@
 				</ul>
 			</li>
 			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="tutorial-Actions.html">Actions</a></li><li><a href="tutorial-Components.html">Components</a></li><li><a href="tutorial-History.html">History</a></li><li><a href="tutorial-Modules.html">Modules</a></li><li><a href="tutorial-Reducers.html">Reducers</a></li><li><a href="tutorial-Rendering.html">Rendering</a></li><li><a href="tutorial-Router.html">Router</a></li><li><a href="tutorial-Selectors.html">Selectors</a></li><li><a href="tutorial-Store.html">Store</a></li>
+				</ul>
+			</li>
+			
 		</ul>
         
             <div class="col-sm-3 col-md-3">
@@ -114,7 +121,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="state.js.html">state.js</a>,
-				 <a href="state.js.html#sunlight-1-line-25">line 25</a>
+				 <a href="state.js.html#sunlight-1-line-22">line 22</a>
 			</li>
 		</ul>
 	</dd>
@@ -356,7 +363,7 @@ action build based on its parameters</p>
 		<ul class="dummy">
 			<li>
 				<a href="state.js.html">state.js</a>,
-				 <a href="state.js.html#sunlight-1-line-128">line 128</a>
+				 <a href="state.js.html#sunlight-1-line-86">line 86</a>
 			</li>
 		</ul>
 	</dd>
@@ -552,7 +559,7 @@ for each</p>
 		<ul class="dummy">
 			<li>
 				<a href="state.js.html">state.js</a>,
-				 <a href="state.js.html#sunlight-1-line-180">line 180</a>
+				 <a href="state.js.html#sunlight-1-line-138">line 138</a>
 			</li>
 		</ul>
 	</dd>
@@ -744,7 +751,7 @@ const action = module.createAsyncAction(&#x27;GET_STUFF&#x27;, (lifecycle, other
 		<ul class="dummy">
 			<li>
 				<a href="state.js.html">state.js</a>,
-				 <a href="state.js.html#sunlight-1-line-335">line 335</a>
+				 <a href="state.js.html#sunlight-1-line-293">line 293</a>
 			</li>
 		</ul>
 	</dd>
@@ -937,7 +944,7 @@ function, either as standard function or as redux-actions map</p>
 		<ul class="dummy">
 			<li>
 				<a href="state.js.html">state.js</a>,
-				 <a href="state.js.html#sunlight-1-line-273">line 273</a>
+				 <a href="state.js.html#sunlight-1-line-231">line 231</a>
 			</li>
 		</ul>
 	</dd>
@@ -1021,181 +1028,6 @@ module.createReducer(INITIAL_STATE, (state, {payload, type}) =&gt; {
        return state;
  }
 });</pre>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~getActionConstants"><span class="type-signature">&lt;inner> </span>getActionConstants(namespace)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>get the constants for the actions of a given namespace</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>namespace</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-|
-
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>module or namespace that action constants are a member of</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="state.js.html">state.js</a>,
-				 <a href="state.js.html#sunlight-1-line-77">line 77</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-        <h5>Example</h5>
-        
-    <pre class="sunlight-highlight-javascript">import {
- getActionConstants
-} from &#x27;arco&#x27;;
-
-// use the string namespace value
-const ACTION_TYPES = getActionContents(&#x27;app&#x27;);
-
-// or a predefined module
-const ACTION_TYPES = getActionContents(appModule);</pre>
 
 
     
@@ -1310,7 +1142,7 @@ const ACTION_TYPES = getActionContents(appModule);</pre>
 		<ul class="dummy">
 			<li>
 				<a href="state.js.html">state.js</a>,
-				 <a href="state.js.html#sunlight-1-line-377">line 377</a>
+				 <a href="state.js.html#sunlight-1-line-335">line 335</a>
 			</li>
 		</ul>
 	</dd>
