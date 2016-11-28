@@ -7,7 +7,7 @@
     "idInHeadings": true
   },
   "opts": {
-    "destination": "./jsdoc",
+    "destination": "./docs",
     "package": "./package.json",
     "readme": "./README.md",
     "recurse": true,
@@ -33,6 +33,7 @@
     ]
   },
   "templates": {
+    "disablePackagePath": true,
     "includeDate": false,
     "linenums": true,
     "navType": "inline",
