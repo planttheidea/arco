@@ -2,11 +2,6 @@
 import axios from 'axios';
 import isPlainObject from 'lodash/isPlainObject';
 
-// utils
-import {
-  keys
-} from './utils';
-
 /**
  * @module ajax
  */
@@ -64,26 +59,45 @@ export const setDefaults = ({baseURL, headers} = {}) => {
   }
 
   if (isPlainObject(headers)) {
+    const currentHeaders = axios.defaults.headers;
     const {
+      common,
       del,
       get,
       head,
       patch,
       post,
-      put,
-      ...common
+      put
     } = headers;
 
-    axios.defaults.headers.delete = del;
-    axios.defaults.headers.get = get;
-    axios.defaults.headers.head = head;
-    axios.defaults.headers.patch = patch;
-    axios.defaults.headers.post = post;
-    axios.defaults.headers.put = put;
-
-    keys(common).forEach((key) => {
-      axios.defaults.headers.common[key] = common[key];
-    });
+    axios.defaults.headers.common = {
+      ...currentHeaders.common,
+      ...common
+    };
+    axios.defaults.headers.delete = {
+      ...currentHeaders.delete,
+      ...del
+    };
+    axios.defaults.headers.get = {
+      ...currentHeaders.get,
+      ...get
+    };
+    axios.defaults.headers.head = {
+      ...currentHeaders.head,
+      ...head
+    };
+    axios.defaults.headers.patch = {
+      ...currentHeaders.patch,
+      ...patch
+    };
+    axios.defaults.headers.post = {
+      ...currentHeaders.post,
+      ...post
+    };
+    axios.defaults.headers.put = {
+      ...currentHeaders.put,
+      ...put
+    };
   }
 
   return axios;

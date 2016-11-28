@@ -40,7 +40,7 @@
 			<li class="dropdown">
 				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="tutorial-Actions.html">Actions</a></li><li><a href="tutorial-Components.html">Components</a></li><li><a href="tutorial-History.html">History</a></li><li><a href="tutorial-Modules.html">Modules</a></li><li><a href="tutorial-Reducers.html">Reducers</a></li><li><a href="tutorial-Rendering.html">Rendering</a></li><li><a href="tutorial-Router.html">Router</a></li><li><a href="tutorial-Selectors.html">Selectors</a></li><li><a href="tutorial-Store.html">Store</a></li>
+					<li><a href="tutorial-Actions.html">Actions</a></li><li><a href="tutorial-Ajax.html">Ajax</a></li><li><a href="tutorial-Components.html">Components</a></li><li><a href="tutorial-History.html">History</a></li><li><a href="tutorial-Modules.html">Modules</a></li><li><a href="tutorial-Reducers.html">Reducers</a></li><li><a href="tutorial-Rendering.html">Rendering</a></li><li><a href="tutorial-Router.html">Router</a></li><li><a href="tutorial-Selectors.html">Selectors</a></li><li><a href="tutorial-Store.html">Store</a></li>
 				</ul>
 			</li>
 			
@@ -211,7 +211,7 @@ export const getCreateAction = (namespace) => {
  * @param {string} namespace namespace action will reside in
  * @returns {function}
  */
-const getCreateAsyncAction = (namespace) => {
+export const getCreateAsyncAction = (namespace) => {
   const createAction = getCreateAction(namespace);
 
   /**
@@ -306,7 +306,7 @@ const getCreateAsyncAction = (namespace) => {
  * @param {string} namespace namespace reducer will reside in
  * @returns {function}
  */
-const getCreateReducer = (namespace) => {
+export const getCreateReducer = (namespace) => {
   /**
    * @function createReducer
    *

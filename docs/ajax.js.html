@@ -40,7 +40,7 @@
 			<li class="dropdown">
 				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="tutorial-Actions.html">Actions</a></li><li><a href="tutorial-Components.html">Components</a></li><li><a href="tutorial-History.html">History</a></li><li><a href="tutorial-Modules.html">Modules</a></li><li><a href="tutorial-Reducers.html">Reducers</a></li><li><a href="tutorial-Rendering.html">Rendering</a></li><li><a href="tutorial-Router.html">Router</a></li><li><a href="tutorial-Selectors.html">Selectors</a></li><li><a href="tutorial-Store.html">Store</a></li>
+					<li><a href="tutorial-Actions.html">Actions</a></li><li><a href="tutorial-Ajax.html">Ajax</a></li><li><a href="tutorial-Components.html">Components</a></li><li><a href="tutorial-History.html">History</a></li><li><a href="tutorial-Modules.html">Modules</a></li><li><a href="tutorial-Reducers.html">Reducers</a></li><li><a href="tutorial-Rendering.html">Rendering</a></li><li><a href="tutorial-Router.html">Router</a></li><li><a href="tutorial-Selectors.html">Selectors</a></li><li><a href="tutorial-Store.html">Store</a></li>
 				</ul>
 			</li>
 			
@@ -84,7 +84,7 @@ import isPlainObject from 'lodash/isPlainObject';
 // utils
 import {
   keys
-} from './utils';
+} from './constants';
 
 /**
  * @module ajax
@@ -143,26 +143,46 @@ export const setDefaults = ({baseURL, headers} = {}) => {
   }
 
   if (isPlainObject(headers)) {
+    const currentHeaders = axios.defaults.headers;
+
     const {
+      common,
       del,
       get,
       head,
       patch,
       post,
-      put,
-      ...common
+      put
     } = headers;
 
-    axios.defaults.headers.delete = del;
-    axios.defaults.headers.get = get;
-    axios.defaults.headers.head = head;
-    axios.defaults.headers.patch = patch;
-    axios.defaults.headers.post = post;
-    axios.defaults.headers.put = put;
-
-    keys(common).forEach((key) => {
-      axios.defaults.headers.common[key] = common[key];
-    });
+    axios.defaults.headers.common = {
+      ...currentHeaders.common,
+      ...common
+    };
+    axios.defaults.headers.delete = {
+      ...currentHeaders.delete,
+      ...del
+    };
+    axios.defaults.headers.get = {
+      ...currentHeaders.get,
+      ...get
+    };
+    axios.defaults.headers.head = {
+      ...currentHeaders.head,
+      ...head
+    };
+    axios.defaults.headers.patch = {
+      ...currentHeaders.patch,
+      ...patch
+    };
+    axios.defaults.headers.post = {
+      ...currentHeaders.post,
+      ...post
+    };
+    axios.defaults.headers.put = {
+      ...currentHeaders.put,
+      ...put
+    };
   }
 
   return axios;

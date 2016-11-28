@@ -39,4 +39,4 @@ const reducer = module.createReducer(INITIAL_STATE, {
 export default module;
 ```
 
-For specifics about creating actions and the reducer from the module, consult the [Actions](http://planttheidea.github.io/acro/tutorials-Actions.html) and [Reducers](http://planttheidea.github.io/acro/tutorials-Reducers.html) tutorials.
+For specifics about creating actions and the reducer from the module, consult the [Actions](http://planttheidea.github.io/arco/tutorials-Actions.html) and [Reducers](http://planttheidea.github.io/arco/tutorials-Reducers.html) tutorials.

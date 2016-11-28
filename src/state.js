@@ -132,7 +132,7 @@ export const getCreateAction = (namespace) => {
  * @param {string} namespace namespace action will reside in
  * @returns {function}
  */
-const getCreateAsyncAction = (namespace) => {
+export const getCreateAsyncAction = (namespace) => {
   const createAction = getCreateAction(namespace);
 
   /**
@@ -227,7 +227,7 @@ const getCreateAsyncAction = (namespace) => {
  * @param {string} namespace namespace reducer will reside in
  * @returns {function}
  */
-const getCreateReducer = (namespace) => {
+export const getCreateReducer = (namespace) => {
   /**
    * @function createReducer
    *

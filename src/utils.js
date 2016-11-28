@@ -26,7 +26,7 @@ import {
  */
 export const getComponentMethods = (options) => {
   let lifecycleMethods = {},
-    localMethods = {};
+      localMethods = {};
 
   keys(options).forEach((method) => {
     if (REACT_LIFECYCLE_METHODS[method]) {

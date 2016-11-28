@@ -1,4 +1,4 @@
-Like [Actions](http://planttheidea.github.io/acro/tutorial-Actions.html), Reducers are created with the scope of a namespaced module, however there are two ways to create a Reducer.
+Like [Actions](http://planttheidea.github.io/arco/tutorial-Actions.html), Reducers are created with the scope of a namespaced module, however there are two ways to create a Reducer.
 
 * [Traditional method](#traditional-method)
 * [Shorthand method](#shorthand-method)

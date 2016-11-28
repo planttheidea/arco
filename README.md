@@ -13,6 +13,7 @@ $ npm i arco --save
 `arco` is a framework designed to streamline a lot of the architectural configuration of a React application by providing several web-standard packages built-in, as well as an API that is built to keep boilerplate minimal.
 
 The following packages are all included as part of `arco`:
+* [axios](https://github.com/mzabriskie/axios) for AJAX calls
 * [react](https://github.com/facebook/react) for views
 * [react-dom](https://github.com/facebook/react/tree/master/packages/react-dom) for rendering into the browser
 * [react-router](https://github.com/ReactTraining/react-router) for routing
@@ -33,6 +34,7 @@ Additionally, the following concepts are applied through convention:
 You can find tutorials on how to create each aspect of an `arco` app in the "Tutorials" section, or select from below:
 
 * [Actions](http://planttheidea.github.io/arco/tutorial-Actions.html): actions consumed by your `redux` store (based on `redux-actions`)
+* [Ajax](http://planttheidea.github.io/arco/tutorial-Ajax.html): make async calls, such as to an API (based on `axios`)
 * [Components](http://planttheidea.github.io/arco/tutorial-Components.html): `react` components that are connected to your store and enhanced by 
 the use of pure functions
 * [History](http://planttheidea.github.io/arco/tutorial-History.html): history used with `react-router` for the single-page application

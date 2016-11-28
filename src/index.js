@@ -25,14 +25,12 @@ import createStore from './store';
 
 // ajax
 import ajax, {
-  createInstance,
   del,
   get,
   head,
   patch,
   post,
-  put,
-  setDefaults
+  put
 } from './ajax';
 
 // router
@@ -102,14 +100,12 @@ export {getActionConstants};
 export {createStore};
 
 export {ajax};
-export {createInstance};
 export {del};
 export {get};
 export {head};
 export {patch};
 export {post};
 export {put};
-export {setDefaults};
 
 export {IndexLink};
 export {IndexRedirect};
