@@ -81,11 +81,6 @@
 import axios from 'axios';
 import isPlainObject from 'lodash/isPlainObject';
 
-// utils
-import {
-  keys
-} from './constants';
-
 /**
  * @module ajax
  */
@@ -144,7 +139,6 @@ export const setDefaults = ({baseURL, headers} = {}) => {
 
   if (isPlainObject(headers)) {
     const currentHeaders = axios.defaults.headers;
-
     const {
       common,
       del,
