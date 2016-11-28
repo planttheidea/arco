@@ -1,4 +1,4 @@
-![arco](/img/arco.png)
+![arco](img/arco.png)
 
 A React+Redux framework to ease the fatigue
 
