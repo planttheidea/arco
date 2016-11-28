@@ -66,6 +66,7 @@
     "onchange": "^3.0.2",
     "optimize-js-plugin": "^0.0.4",
     "postcss-loader": "^1.1.1",
+    "precommit-hook": "^3.0.0",
     "react-addons-test-utils": "^15.4.1",
     "redux-mock-store": "^1.2.1",
     "rimraf": "^2.5.4",
@@ -88,6 +89,10 @@
   "license": "MIT",
   "main": "lib/index.js",
   "name": "arco",
+  "pre-commit": [
+    "lint",
+    "test"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/planttheidea/arco.git"
@@ -105,7 +110,8 @@
     "test": "NODE_PATH=. NODE_ENV=test ava --no-cache",
     "test:coverage": "nyc npm test",
     "test:watch": "NODE_PATH=. NODE_ENV=test ava --watch",
-    "transpile": "babel src --out-dir lib"
+    "transpile": "babel src --out-dir lib",
+    "validate": "npm ls"
   },
   "version": "0.1.0"
 }

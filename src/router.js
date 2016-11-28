@@ -57,7 +57,7 @@ const HISTORY_TYPES = {
  *  });
  * });
  *
- * @param {function|string} [history=browser] type of history to create
+ * @param {function|'browser'|'hash'|'memory'} [history=browser] type of history to create
  * @param {Object} [memoryHistoryOptions] options specific to creating a memory history
  * @returns {Object}
  */
