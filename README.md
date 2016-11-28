@@ -26,9 +26,7 @@ Additionally, the following concepts are applied through convention:
 * [ducks](https://github.com/erikras/ducks-modular-redux) for encapsulated functionality modules of actions / reducer
 * [flux-standard-action](https://github.com/acdlite/flux-standard-action) for formatting of actions in a standard way
 
-`arco` provides a layer of abstraction over the use of these so that you can focus on implementation, but with the same sort of flexibility you would expect from each of these packages directly. Think of it as convention **with** configuration.
-
-Additionally, keeping in line with `redux`, there is a focus on *immutability* and *pure functions*. Notice in the usage example below that `App` has lifecycle methods and an instance method with access to props even though it is a functional component. This is explained more in detail below.
+`arco` provides a layer of abstraction over the use of these so that you can focus on implementation, but with the same sort of flexibility you would expect from each of these packages directly. Think of it as convention **with** configuration. Additionally, keeping in line with `redux`, `arco` focuses on *immutability* and *pure functions* to eliminate side effects and make testing easier.
 
 #### Building an app
 

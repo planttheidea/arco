@@ -1,10 +1,11 @@
 .idea
 .nyc_output
 coverage
-DEV_ONLY
+jsdoc
 node_modules
 src
 test
+TodoList
 .babelrc
 .eslintrc
 .gitignore

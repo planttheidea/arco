@@ -7,7 +7,7 @@
     "idInHeadings": true
   },
   "opts": {
-    "destination": "./docs",
+    "destination": "./jsdoc",
     "package": "./package.json",
     "readme": "./README.md",
     "recurse": true,
