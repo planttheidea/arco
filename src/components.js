@@ -1,7 +1,7 @@
 // external dependencies
 import isFunction from 'lodash/isFunction';
 import React, {
-  Component as ReactComponent
+  Component
 } from 'react';
 import {
   findDOMNode
@@ -39,10 +39,10 @@ import {
  * @description
  * add to component the property if the value exists
  *
- * @param {ReactComponent} component component to add the property to
+ * @param {Component} component component to add the property to
  * @param {string} property property name
  * @param {*} value value of the property to assign
- * @returns {ReactComponent}
+ * @returns {Component}
  */
 export const addPropertyIfExists = (component, property, value) => {
   if (!!value) {
@@ -60,15 +60,18 @@ export const addPropertyIfExists = (component, property, value) => {
  * @description
  * assign the child context to the component passed
  * 
- * @param {ReactComponent} component component to assign child context to
+ * @param {Component} component component to assign child context to
  * @param {function} getChildContext method for getting child context
- * @returns {ReactComponent}
+ * @param {boolean} [canAccessThis=false] can the method access the instance
+ * @returns {Component}
  */
-export const assignChildContext = (component, getChildContext) => {
+export const assignChildContext = (component, getChildContext, canAccessThis = false) => {
   testParameter(getChildContext, isFunction, 'getChildContext is not a function', ERROR_TYPES.TYPE);
 
-  component.getChildContext = function() {
-    return getChildContext(component.props, component.context);
+  const boundThis = canAccessThis ? component : undefined;
+
+  component.getChildContext = () => {
+    return getChildContext.call(boundThis, component.props, component.context);
   };
 
   return component;
@@ -82,8 +85,8 @@ export const assignChildContext = (component, getChildContext) => {
  * @description
  * assign the instance values to the component passed
  * 
- * @param {ReactComponent} component component to assign instance values to
- * @returns {ReactComponent}
+ * @param {Component} component component to assign instance values to
+ * @returns {Component}
  */
 export const assignInstanceValues = (component) => {
   component.getPropsToPass = memoize(getPropsAndMethods);
@@ -100,12 +103,12 @@ export const assignInstanceValues = (component) => {
  * @description
  * if there are redux-specific options present, connect the component
  *
- * @param {ReactComponent} component component to connect to redux if applicable
+ * @param {Component} component component to connect to redux if applicable
  * @param {function|Object} mapDispatchToProps functions wrapped in dispatch to pass as props
  * @param {function} mapStateToProps state to pass as props
  * @param {function} mergeProps function to merge store state with local props
  * @param {Object} reduxOptions additional options to pass to @connect
- * @returns {ReactComponent}
+ * @returns {Component}
  */
 export const connectIfReduxPropertiesExist = (component, {
   mapDispatchToProps,
@@ -131,7 +134,7 @@ export const connectIfReduxPropertiesExist = (component, {
  * @param {function} getPropsToPass method to get all props to pass down
  * @returns {boolean}
  */
-export const hasGetPropsToPass = ({getPropsToPass}) => {
+export const hasGetPropsToPass = ({getPropsToPass} = {}) => {
   return isFunction(getPropsToPass);
 };
 
@@ -143,11 +146,12 @@ export const hasGetPropsToPass = ({getPropsToPass}) => {
  * @description
  * assign the lifecycle methods to the instance
  *
- * @param {ReactComponent|StatefulComponent} component component to assign lifecycle methods to
+ * @param {Component|StatefulComponent} component component to assign lifecycle methods to
  * @param {Object} lifecycleMethods map of lifecycle methods
- * @returns {ReactComponent}
+ * @param {boolean} [canAccessThis=false] can the method access the instance
+ * @returns {Component}
  */
-export const assignLifecycleMethods = (component, lifecycleMethods) => {
+export const assignLifecycleMethods = (component, lifecycleMethods, canAccessThis = false) => {
   const getAllProps = () => {
     if (hasGetPropsToPass(component)) {
       return component.getPropsToPass(component.props, component.methods);
@@ -156,20 +160,22 @@ export const assignLifecycleMethods = (component, lifecycleMethods) => {
     return component.props;
   };
 
+  const appliedThis = canAccessThis ? component : undefined;
+
   keys(lifecycleMethods).forEach((key) => {
     testParameter(lifecycleMethods[key], isFunction,
       `${key} is not a function, skipping assignment to instance.`, ERROR_TYPES.TYPE);
 
-    component[key] = function(props, state, context) {
+    component[key] = (props) => {
       let args = [getAllProps()];
 
       if (props) {
         args.push(props);
       }
 
-      args.push(component.context, context);
+      args.push(component.context);
 
-      return lifecycleMethods[key](...args);
+      return lifecycleMethods[key].apply(appliedThis, args);
     };
   });
 
@@ -184,9 +190,9 @@ export const assignLifecycleMethods = (component, lifecycleMethods) => {
  * @description
  * assign the local methods to the instance
  *
- * @param {ReactComponent} component component to assign local methods to
+ * @param {Component} component component to assign local methods to
  * @param {Object} localMethods map of methods accessible locally through props
- * @returns {ReactComponent}
+ * @returns {Component}
  */
 export const assignLocalMethods = (component, localMethods) => {
   const getAllProps = () => {
@@ -279,10 +285,10 @@ export const getStatefulComponent = (PassedComponent, options) => {
     constructor(...args) {
       super(...args);
 
-      assignLifecycleMethods(this, lifecycleMethods);
+      assignLifecycleMethods(this, lifecycleMethods, true);
 
       if (childContextTypes && getChildContext) {
-        assignChildContext(this, getChildContext);
+        assignChildContext(this, getChildContext, true);
       }
     }
 
@@ -332,7 +338,7 @@ export const getStatelessComponent = (PassedComponent, options) => {
   addPropertyIfExists(PassedComponent, 'contextTypes', contextTypes);
   addPropertyIfExists(PassedComponent, 'propTypes', propTypes);
 
-  class StatelessComponent extends ReactComponent {
+  class StatelessComponent extends Component {
     constructor(...args) {
       super(...args);
 
@@ -399,6 +405,6 @@ export const createComponent = (PassedComponent, options = {}) => {
   return getStatelessComponent(PassedComponent, options);
 };
 
-export {ReactComponent as StatefulComponent};
+export {Component as StatefulComponent};
 
 export default createComponent;
