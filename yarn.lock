@@ -3027,6 +3027,10 @@ ignore@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.2.0.tgz#8d88f03c3002a0ac52114db25d2c673b0bf1e435"
 
+immutable@^3.7.6:
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
+
 imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
@@ -5063,6 +5067,12 @@ redux-actions@^1.1.0:
     lodash "^4.13.1"
     reduce-reducers "^0.1.0"
 
+redux-immutable@^3.0.8:
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/redux-immutable/-/redux-immutable-3.0.8.tgz#df5a5d601c88227ba38f474cf82f7d00e56f8c14"
+  dependencies:
+    immutable "^3.7.6"
+
 redux-mock-store@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/redux-mock-store/-/redux-mock-store-1.2.1.tgz#630c0e2642927d1417c844d935266b501f2fc231"
@@ -6105,10 +6115,6 @@ webpack-sources@^0.1.2:
   dependencies:
     source-list-map "~0.1.0"
     source-map "~0.5.3"
-
-webpack-strip-block@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/webpack-strip-block/-/webpack-strip-block-0.1.0.tgz#bed2d60bc852a38a51076354d771002a3ac06f6e"
 
 webpack@^1.13.1, webpack@^1.13.3:
   version "1.13.3"

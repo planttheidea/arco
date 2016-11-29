@@ -7,4 +7,3 @@ As such, here are the links for all the setup examples you should need to get ro
 * [Route configuration](https://github.com/ReactTraining/react-router/blob/master/docs/guides/RouteConfiguration.md)
 * [Route matching](https://github.com/ReactTraining/react-router/blob/master/docs/guides/RouteMatching.md)
 * [Index Routes and Links](https://github.com/ReactTraining/react-router/blob/master/docs/guides/IndexRoutes.md)
-z

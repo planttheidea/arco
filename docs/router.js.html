@@ -170,6 +170,42 @@ export const createHistory = (history = HISTORY_TYPES.BROWSER, memoryHistoryOpti
   );
 };
 
+/**
+ * @function syncHistoryWithImmutableStore
+ *
+ * @description
+ * convenience function to sync your history to your store when it is using redux-immutable
+ *
+ * @example
+ * import {
+ *  createHistory,
+ *  createStore,
+ *  syncHistoryWithImmutableStore
+ * } from 'arco';
+ *
+ * import modules from 'modules';
+ *
+ * const history = createHistory();
+ * const store = createStore(modules, {
+ *  isImmutable: true
+ * });
+ *
+ * const syncedHistory = syncHistoryWithImmutableStore(history, store);
+ *
+ * @param {Object} history history that the application uses
+ * @param {Object} store redux store for the application state
+ * @param {Object} [options={}] additional options for syncHistoryWithStore
+ * @returns {Object}
+ */
+export const syncHistoryWithImmutableStore = (history, store, options = {}) => {
+  return syncHistoryWithStore(history, store, {
+    ...options,
+    selectLocationState(state) {
+      return state.get('routing').toJS();
+    }
+  });
+};
+
 export {IndexLink};
 export {IndexRedirect};
 export {IndexRoute};

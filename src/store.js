@@ -11,6 +11,9 @@ import {
   compose,
   createStore as createReduxStore
 } from 'redux';
+import {
+  combineReducers as combineImmutableReducers
+} from 'redux-immutable';
 import reduxThunk from 'redux-thunk';
 
 // modules
@@ -171,6 +174,7 @@ export const getReducerMap = (modules, hasHistory) => {
  * @param {boolean} [autoRestore=false] whether the state should be kept in sessionStorage and automatically restored
  * @param {Object} history history object to use for creation of the store
  * @param {Object} [initialState={}] state to hydrate the store with upon creation
+ * @param {boolean} [isImmutable=false] whether to use redux-immutable when combining reducers (if using ImmutableJS)
  * @param {Array<Object|function>} [middlewares=[]] array of middlewares to use in the store creation
  * @param {boolean} [thunk=true] whether to include redux-thunk in the middlewares used in the store creation
  * @returns {Store}
@@ -179,6 +183,7 @@ export const createStore = (modules, {
   autoRestore = false,
   history,
   initialState = {},
+  isImmutable = false,
   middlewares = [],
   thunk = true
 }) => {
@@ -186,8 +191,10 @@ export const createStore = (modules, {
   testParameter(initialState, isPlainObject, 'initialState must be an object.', ERROR_TYPES.TYPE);
   testParameter(middlewares, isArray, 'middlewares must be an array of functions.', ERROR_TYPES.TYPE);
 
+  const reducerCombiner = isImmutable ? combineImmutableReducers : combineReducers;
+
   const mapOfReducers = getReducerMap(modules, !!history);
-  const allReducers = combineReducers(mapOfReducers);
+  const allReducers = reducerCombiner(mapOfReducers);
   const enhancers = getEnhancers(middlewares, thunk);
 
   if (!autoRestore) {

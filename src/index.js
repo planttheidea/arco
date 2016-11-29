@@ -51,6 +51,7 @@ import {
   locationShape,
   match,
   routerShape,
+  syncHistoryWithImmutableStore,
   syncHistoryWithStore,
   withRouter
 } from './router.js';
@@ -138,6 +139,7 @@ export {formatPattern};
 export {locationShape};
 export {match};
 export {routerShape};
+export {syncHistoryWithImmutableStore};
 export {syncHistoryWithStore};
 export {withRouter};
 

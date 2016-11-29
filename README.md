@@ -20,6 +20,7 @@ The following packages are all included as part of `arco`:
 * [react-router-redux](https://github.com/reactjs/react-router-redux) for react-router bindings into redux
 * [redux](https://github.com/reactjs/redux) for state management
 * [redux-actions](https://github.com/acdlite/redux-actions) for simplified redux action creation
+* [redux-immutable](https://github.com/gajus/redux-immutable) for use of redux with stores based on ImmutableJS
 * [redux-thunk](https://github.com/gaearon/redux-thunk) for asynchronous actions (optional)
 * [reselect](https://github.com/reactjs/reselect) for memoized selectors
 

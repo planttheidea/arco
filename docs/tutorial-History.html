@@ -83,6 +83,7 @@
 <ul>
 <li><a href="#standard">Standard</a></li>
 <li><a href="#custom">Custom</a></li>
+<li><a href="#use-with-immutablejs">Use with ImmutableJS</a></li>
 </ul>
 <h4 id="standard">Standard</h4>
 <p>For most applications, use of a standard history is sufficient for routing.</p>
@@ -110,7 +111,16 @@ export default createHistory((useRouterHistory) => {
   return useRouterHistory(createHashHistory)({
     queryKey: false
   });
-});</code></pre>
+});</code></pre><h4 id="use-with-immutablejs">Use with ImmutableJS</h4>
+<p>If you create your <a href="https://planttheidea.github.io/arco/tutorial-Reducers.html">Reducer</a> with <code>isImmutable</code> set to <code>true</code> and you want to sync your history with that store, you should use the provided <code>syncHistoryWithImmutableStore</code> function instead of the standard <code>syncHistoryWithStore</code>.</p>
+<pre class="prettyprint source lang-javascript"><code>import {
+  syncHistoryWithImmutableStore
+} from 'arco';
+
+import history from './history';
+import store from './store';
+
+const syncedHistory = syncHistoryWithImmutableStore(history, store);</code></pre><p>This is a convenience function that performs the standard synching method that <code>redux-immutable</code> requires.</p>
 </article>
 
 </section>

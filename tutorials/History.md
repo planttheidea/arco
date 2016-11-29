@@ -2,6 +2,7 @@ Creating a history object is useful if your application uses routing (which most
 
 * [Standard](#standard)
 * [Custom](#custom)
+* [Use with ImmutableJS](#use-with-immutablejs)
 
 #### Standard
 
@@ -37,3 +38,20 @@ export default createHistory((useRouterHistory) => {
   });
 });
 ```
+
+#### Use with ImmutableJS
+
+If you create your [Reducer](https://planttheidea.github.io/arco/tutorial-Reducers.html) with `isImmutable` set to `true` and you want to sync your history with that store, you should use the provided `syncHistoryWithImmutableStore` function instead of the standard `syncHistoryWithStore`.
+
+```javascript
+import {
+  syncHistoryWithImmutableStore
+} from 'arco';
+
+import history from './history';
+import store from './store';
+
+const syncedHistory = syncHistoryWithImmutableStore(history, store);
+```
+
+This is a convenience function that performs the standard synching method that `redux-immutable` requires.
