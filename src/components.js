@@ -287,7 +287,7 @@ export const getStatefulComponent = (PassedComponent, options) => {
     }
 
     render() {
-      return super.render();
+      return super.render(this.props, this.context);
     }
   }
 

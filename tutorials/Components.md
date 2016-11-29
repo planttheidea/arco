@@ -210,6 +210,7 @@ export default createComponent(Foo, {
 });
 ```
 
-StatefulComponent is a mirror image of `React.Component`, so consult the standard React documentation for usage.
+StatefulComponent is basically a mirror image of `React.Component`, so consult the standard React documentation for usage. There are two things to note, however:
 
-Stateful components can receive pure lifecycle methods as options (which override any declared in the `class` itself), however local and additional methods are not provided.
+* Stateful components can receive pure lifecycle methods as options, however local and additional methods are not available as options
+* The `render` method of `StatefulComponent` receives both `props` and `context` of the component as parameters (`state` is not provided)

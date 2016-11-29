@@ -14,7 +14,8 @@
     ],
     "require": [
       "babel-register",
-      "babel-polyfill"
+      "babel-polyfill",
+      "./test/helpers/setup-browser-env.js"
     ],
     "verbose": true
   },

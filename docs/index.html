@@ -135,6 +135,21 @@ them (based on )</li>
 <li><a href="http://planttheidea.github.io/arco/tutorial-Selectors.html">Selectors</a>: memoized selectors for computed data to keep your stored state small (based on <code>reselect</code>)</li>
 <li><a href="http://planttheidea.github.io/arco/tutorial-Store.html">Store</a>: your <code>redux</code> store which encompasses the state of your entire application</li>
 </ul>
+<h4 id="setup">Setup</h4>
+<p>There are a couple things to be aware of when setting up <code>arco</code> for your application.</p>
+<p><strong>React global</strong></p>
+<p><code>arco</code> expects there to be a global <code>React</code> object for it to render components, and if you don't provide it then you will receive a <code>React is not defined</code> error when attempting to render. There are two ways to fix this error:</p>
+<ul>
+<li>Create a <code>React</code> global<ul>
+<li>With <code>webpack</code> you can use <code>ProviderPlugin</code></li>
+<li>With <code>browserify</code> you can use something like <a href="https://github.com/rluba/browserify-global-shim">browserify-global-shim</a></li>
+<li>With <code>&lt;script&gt;</code> you just make sure to put the tag for <code>React</code> first</li>
+</ul>
+</li>
+<li>Import <code>React</code> from the <code>arco</code> package whenever creating a component</li>
+</ul>
+<p><strong>ImmutableJS is not included</strong></p>
+<p>While it is a common paradigm to pair <code>React</code> applications with the library <code>ImmutableJS</code>, it is not included in <code>arco</code> because of its opinionated nature. As such, if you want to use it with your application, you will need to import separately. That said, there are integration options related to your application's <a href="https://planttheidea.github.io/arco/tutorial-History.html">History</a> and <a href="https://planttheidea.github.io/arco/tutorial-Store.html">Store</a> included in <code>arco</code>.</p>
 <h4 id="contributing">Contributing</h4>
 <p>This project is in its infancy, and many more expansion capabilities are there:</p>
 <ul>
@@ -278,6 +293,41 @@ $( function () {
 
 
 <!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
 
 
 <!--Google Analytics-->

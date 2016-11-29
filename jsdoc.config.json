@@ -33,6 +33,7 @@
     ]
   },
   "templates": {
+    "collapseSymbols": true,
     "disablePackagePath": true,
     "includeDate": false,
     "linenums": true,

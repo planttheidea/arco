@@ -11,6 +11,15 @@ module.exports = {
     path.resolve(__dirname, 'src', 'index.js')
   ],
 
+  externals: {
+    immutable: {
+      amd: 'immutable',
+      commonjs: 'immutable',
+      commonjs2: 'immutable',
+      root: 'Immutable'
+    }
+  },
+
   eslint: {
     configFile: '.eslintrc',
     emitError: true,

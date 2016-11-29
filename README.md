@@ -47,6 +47,24 @@ them (based on )
 * [Selectors](http://planttheidea.github.io/arco/tutorial-Selectors.html): memoized selectors for computed data to keep your stored state small (based on `reselect`)
 * [Store](http://planttheidea.github.io/arco/tutorial-Store.html): your `redux` store which encompasses the state of your entire application
 
+#### Setup
+
+There are a couple things to be aware of when setting up `arco` for your application.
+
+**React global**
+
+`arco` expects there to be a global `React` object for it to render components, and if you don't provide it then you will receive a `React is not defined` error when attempting to render. There are two ways to fix this error:
+
+* Create a `React` global
+    * With `webpack` you can use `ProviderPlugin`
+    * With `browserify` you can use something like [browserify-global-shim](https://github.com/rluba/browserify-global-shim)
+    * With `<script>` you just make sure to put the tag for `React` first
+* Import `React` from the `arco` package whenever creating a component
+
+**ImmutableJS is not included**
+
+While it is a common paradigm to pair `React` applications with the library `ImmutableJS`, it is not included in `arco` because of its opinionated nature. As such, if you want to use it with your application, you will need to import separately. That said, there are integration options related to your application's [History](https://planttheidea.github.io/arco/tutorial-History.html) and [Store](https://planttheidea.github.io/arco/tutorial-Store.html) included in `arco`.
+
 #### Contributing
 
 This project is in its infancy, and many more expansion capabilities are there:
