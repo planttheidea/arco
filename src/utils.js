@@ -1,17 +1,48 @@
 // external dependencies
 import fastMemoize from 'fast-memoize';
 import isFunction from 'lodash/isFunction';
+import isPlainObject from 'lodash/isPlainObject';
+import noop from 'lodash/noop';
 import {
   Component
 } from 'react';
 
 // constants
 import {
+  ERROR_TYPES,
   REACT_ELEMENT_TYPE,
   REACT_LIFECYCLE_METHODS,
 
   keys
 } from './constants';
+
+/* eslint-disable no-console */
+if (!console.error) {
+  console.error = console.log || noop;
+}
+/* eslint-enable */
+
+/**
+ * @private
+ *
+ * @function testParameter
+ *
+ * @description
+ * if the object is the type based on testMethod, fire error with
+ * message and type
+ *
+ * @param {*} object object to be tested
+ * @param {function} testMethod method to test the type of object
+ * @param {string} message message to show in error if not of proper type
+ * @param {'Error'|'ReferenceError'|'TypeError'} [type='Error'] type of error to show
+ */
+export const testParameter = (object, testMethod, message, type = ERROR_TYPES.DEFAULT) => {
+  if (!testMethod(object)) {
+    /* eslint-disable no-console */
+    console.error(`${type}: ${message}`);
+    /* eslint-enable */
+  }
+};
 
 /**
  * @private
@@ -31,8 +62,13 @@ export const getComponentMethods = (options) => {
   keys(options).forEach((method) => {
     if (REACT_LIFECYCLE_METHODS[method]) {
       lifecycleMethods[method] = options[method];
-    } else if (isFunction(options[method])) {
-      localMethods[method] = options[method];
+    } else {
+      testParameter(options[method], isFunction, `${method} is not a function, skipping assignment to instance.`,
+        ERROR_TYPES.TYPE);
+
+      if (isFunction(options[method])) {
+        localMethods[method] = options[method];
+      }
     }
   });
 
@@ -40,36 +76,6 @@ export const getComponentMethods = (options) => {
     lifecycleMethods,
     localMethods
   };
-};
-
-/**
- * @private
- *
- * @function getComponentMethods
- *
- * @description
- * recursively get the nested value from the the object
- * based on the array of properties passed
- *
- * @param {Object} object object to retrieve nested value from
- * @param {Array<string>} properties array of property values to move down the tree
- * @returns {*}
- */
-export const getNestedValueFromObject = (object, properties) => {
-  const [
-    property,
-    ...restOfProperties
-  ] = properties;
-
-  if (!object.hasOwnProperty(property)) {
-    return undefined;
-  }
-
-  if (!restOfProperties.length) {
-    return object[property];
-  }
-
-  return getNestedValueFromObject(object[property], restOfProperties);
 };
 
 /**
@@ -133,7 +139,7 @@ export const isReactCompositeComponentWrapper = (object) => {
  * @returns {boolean}
  */
 export const isReactElement = (object) => {
-  return !!object && object.$$type === REACT_ELEMENT_TYPE;
+  return !!object && object.$$typeof === REACT_ELEMENT_TYPE;
 };
 
 /**
@@ -194,4 +200,35 @@ export const memoize = (fn) => {
   return fastMemoize(fn, {
     serializer: memoizeSerializer
   });
+};
+
+/**
+ * @private
+ *
+ * @function testMetaHandler
+ *
+ * @description
+ * test if the meta handler is the correct type
+ *
+ * @param {function} metaHandler the method used to handle meta properties in atcion creation
+ * @returns {boolean}
+ */
+export const testMetaHandler = (metaHandler) => {
+  return !metaHandler || isFunction(metaHandler);
+};
+
+
+/**
+ * @private
+ *
+ * @function testReducerHandler
+ *
+ * @description
+ * test if the reducer is the correct type
+ *
+ * @param {function} handler the method used as reducer for a module
+ * @returns {boolean}
+ */
+export const testReducerHandler = (handler) => {
+  return isFunction(handler) || isPlainObject(handler);
 };

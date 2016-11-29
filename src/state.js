@@ -1,5 +1,6 @@
 // external dependencies
 import isFunction from 'lodash/isFunction';
+import isPlainObject from 'lodash/isPlainObject';
 import isString from 'lodash/isString';
 import noop from 'lodash/noop';
 import {
@@ -14,8 +15,16 @@ import {
 
 // constants
 import {
+  ERROR_TYPES,
   STATUS
 } from './constants';
+
+// utils
+import {
+  testMetaHandler,
+  testParameter,
+  testReducerHandler
+} from './utils';
 
 let moduleCache = {};
 
@@ -105,9 +114,10 @@ export const getCreateAction = (namespace) => {
    * @returns {function}
    */
   return (name, payloadCreator = getIdentityValue, metaCreator = null) => {
-    if (!isString(name)) {
-      throw new TypeError('Name of action must be a string.');
-    }
+    testParameter(name, isString, 'Name of action must be a string.', ERROR_TYPES.TYPE);
+    testParameter(payloadCreator, isFunction, 'Payload handler must be a function.', ERROR_TYPES.TYPE);
+    testParameter(payloadCreator, isFunction, 'Payload handler must be a function.', ERROR_TYPES.TYPE);
+    testParameter(metaCreator, testMetaHandler, 'meta handler must be a function.', ERROR_TYPES.TYPE);
 
     const constantName = `${namespace}/${name}`;
     const action = createReduxAction(constantName, payloadCreator, metaCreator);
@@ -179,9 +189,8 @@ export const getCreateAsyncAction = (namespace) => {
    * @returns {function}
    */
   return (name, payloadHandler) => {
-    if (!isString(name)) {
-      throw new TypeError('Name of action must be a string.');
-    }
+    testParameter(name, isString, 'Name of action must be a string.', ERROR_TYPES.TYPE);
+    testParameter(payloadHandler, isFunction, 'Payload handler must be a function.', ERROR_TYPES.TYPE);
 
     const onError = createAction(name, getIdentityValue, asyncErrorActionCreator);
     const onRequest = createAction(name, getIdentityValue, asyncRequestActionCreator);
@@ -254,7 +263,7 @@ export const getCreateReducer = (namespace) => {
    *    return {
    *      ...state,
    *      name: payload
- *      };
+   *    };
    *  }
    * });
    *
@@ -267,8 +276,8 @@ export const getCreateReducer = (namespace) => {
    *        name: payload
    *      };
    *
- *      default:
- *        return state;
+   *    default:
+   *      return state;
    *  }
    * });
    *
@@ -277,11 +286,17 @@ export const getCreateReducer = (namespace) => {
    * @returns {function}
    */
   return (initialState, handler) => {
-    const reducer = !isFunction(handler)
-      ? handleActions(handler, initialState)
-      : (state = initialState, action) => {
-      return handler(state, action);
-    };
+    let reducer;
+
+    testParameter(handler, testReducerHandler, 'Reducer must either be an object or a function.', ERROR_TYPES.TYPE);
+
+    if (isFunction(handler)) {
+      reducer = (state = initialState, action) => {
+        return handler(state, action);
+      };
+    } else if (isPlainObject(handler)) {
+      reducer = handleActions(handler, initialState);
+    }
 
     moduleCache[namespace].reducer = reducer;
     reducer.namespace = namespace;
@@ -307,12 +322,10 @@ export const getCreateReducer = (namespace) => {
  * @returns {Object}
  */
 export const createModule = (namespace) => {
-  if (!isString(namespace)) {
-    throw new TypeError('Namespace provided must be a string.');
-  }
+  testParameter(namespace, isString, 'Namespace provided must be a string.', ERROR_TYPES.TYPE);
 
   if (moduleCache[namespace]) {
-    throw new ReferenceError(`Namespace ${namespace} is already in use.`);
+    throw new ReferenceError(`Namespace ${namespace} is already in use.`, ERROR_TYPES.REFERENCE);
   }
 
   moduleCache[namespace] = {

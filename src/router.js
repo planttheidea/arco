@@ -24,11 +24,16 @@ import {
   syncHistoryWithStore
 } from 'react-router-redux';
 
-const HISTORY_TYPES = {
-  BROWSER: 'browser',
-  HASH: 'hash',
-  MEMORY: 'memory'
-};
+// utils
+import {
+  testParameter
+} from './utils';
+
+// constants
+import {
+  ERROR_TYPES,
+  HISTORY_TYPES
+} from './constants';
 
 /**
  * @module router
@@ -78,8 +83,12 @@ export const createHistory = (history = HISTORY_TYPES.BROWSER, memoryHistoryOpti
     return history(useRouterHistory);
   }
 
-  throw new ReferenceError('History does not match any known values, and you are not attempting to create' +
-    'your own custom history.');
+  testParameter(
+    history,
+    isFunction,
+    'History does not match any known values, and you are not attempting to create your own custom history.',
+    ERROR_TYPES.REFERENCE
+  );
 };
 
 export {IndexLink};

@@ -12,6 +12,8 @@ import {
 
 // constants
 import {
+  ERROR_TYPES,
+
   keys
 } from './constants';
 
@@ -21,7 +23,8 @@ import {
   getPropsAndMethods,
   isReactClass,
   isReactEvent,
-  memoize
+  memoize,
+  testParameter
 } from './utils';
 
 /**
@@ -62,6 +65,8 @@ export const addPropertyIfExists = (component, property, value) => {
  * @returns {ReactComponent}
  */
 export const assignChildContext = (component, getChildContext) => {
+  testParameter(getChildContext, isFunction, 'getChildContext is not a function', ERROR_TYPES.TYPE);
+
   component.getChildContext = function() {
     return getChildContext(component.props, component.context);
   };
@@ -152,6 +157,9 @@ export const assignLifecycleMethods = (component, lifecycleMethods) => {
   };
 
   keys(lifecycleMethods).forEach((key) => {
+    testParameter(lifecycleMethods[key], isFunction,
+      `${key} is not a function, skipping assignment to instance.`, ERROR_TYPES.TYPE);
+
     component[key] = function(props, state, context) {
       let args = [getAllProps()];
 

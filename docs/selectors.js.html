@@ -78,10 +78,10 @@
     <article>
         <pre
             class="sunlight-highlight-javascript linenums">// external dependencies
+import get from 'lodash/get';
 import isArray from 'lodash/isArray';
 import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
-import toPath from 'lodash/toPath';
 import {
   createSelector as createReselectSelector,
   createSelectorCreator
@@ -89,8 +89,13 @@ import {
 
 // utils
 import {
-  getNestedValueFromObject
+  testParameter
 } from './utils';
+
+// constants
+import {
+  ERROR_TYPES
+} from './constants';
 
 /**
  * @module selectors
@@ -112,10 +117,8 @@ export const createIdentitySelector = (property) => {
     return property;
   }
 
-  const pathProperties = toPath(property);
-
   return (passedState) => {
-    return getNestedValueFromObject(passedState, pathProperties);
+    return get(passedState, property);
   };
 };
 
@@ -238,9 +241,10 @@ export const createSelector = (
     return getStructuredSelector(properties, selectorGenerator);
   }
 
-  if (!isArray(properties)) {
-    throw new TypeError('Properties passed must be either an object of keys and paths or an array of paths.');
-  }
+  testParameter(properties, isArray, 'Properties passed must be either an object of keys and paths or an array of paths.',
+    ERROR_TYPES.TYPE);
+
+  testParameter(getComputedValue, isFunction, 'Computed value passed must be a function.', ERROR_TYPES.TYPE);
 
   return getStandardSelector(properties, selectorGenerator, getComputedValue);
 };

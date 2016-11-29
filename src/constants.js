@@ -1,5 +1,17 @@
 export const keys = Object.keys;
 
+export const ERROR_TYPES = {
+  DEFAULT: 'Error',
+  REFERENCE: 'ReferenceError',
+  TYPE: 'TypeError'
+};
+
+export const HISTORY_TYPES = {
+  BROWSER: 'browser',
+  HASH: 'hash',
+  MEMORY: 'memory'
+};
+
 export const REACT_LIFECYCLE_METHODS = {
   componentWillMount: 1,
   componentDidMount: 2,

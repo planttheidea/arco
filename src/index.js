@@ -1,4 +1,6 @@
 // external dependencies
+import isElement from 'lodash/isElement';
+import isPlainObject from 'lodash/isPlainObject';
 import React, {
   PropTypes
 } from 'react';
@@ -56,6 +58,17 @@ import {
 // selectors
 import createSelector from './selectors';
 
+// utils
+import {
+  isReactElement,
+  testParameter
+} from './utils';
+
+// constants
+import {
+  ERROR_TYPES
+} from './constants';
+
 /**
  * @module index
  */
@@ -78,14 +91,18 @@ import createSelector from './selectors';
  *  <App/>
  * ), document.querySelector('#app'), store);
  *
- * @param {React.Component} Component component to render in element
+ * @param {ReactElement} component component to render in element
  * @param {HTMLElement} element HTML element to render Component inside of
  * @param {Object} store redux store to pass to all components
  */
-export const render = (Component, element, store) => {
+export const render = (component, element, store) => {
+  testParameter(component, isReactElement, 'Component passed is not a valid React element.', ERROR_TYPES.TYPE);
+  testParameter(element, isElement, 'Element passed to render into is not a valid HTML element.', ERROR_TYPES.TYPE);
+  testParameter(store, isPlainObject, 'Store passed is not a valid arco store.', ERROR_TYPES.TYPE);
+
   ReactRender((
     <Provider store={store}>
-      {Component}
+      {component}
     </Provider>
   ), element);
 };

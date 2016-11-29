@@ -5,11 +5,26 @@ const OptimizeJsPlugin = require('optimize-js-plugin');
 
 const defaultConfig = require("./webpack.config.js");
 
+const loaders = defaultConfig.module.loaders.concat([
+  {
+    cacheable: true,
+    include: [
+      /src/
+    ],
+    loader: 'strip-loader?strip[]=testParameter',
+    test: /\.js/
+  }
+]);
+
 module.exports = Object.assign({}, defaultConfig, {
   devtool: null,
 
   output: Object.assign({}, defaultConfig.output, {
     filename: "arco.min.js"
+  }),
+
+  module: Object.assign({}, defaultConfig.module, {
+    loaders
   }),
 
   plugins: defaultConfig.plugins.concat([

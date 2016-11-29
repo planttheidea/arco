@@ -79,7 +79,18 @@
         <pre
             class="sunlight-highlight-javascript linenums">// external dependencies
 import axios from 'axios';
+import isString from 'lodash/isString';
 import isPlainObject from 'lodash/isPlainObject';
+
+// utils
+import {
+  testParameter
+} from './utils';
+
+// constants
+import {
+  ERROR_TYPES
+} from './constants';
 
 /**
  * @module ajax
@@ -100,7 +111,7 @@ import isPlainObject from 'lodash/isPlainObject';
  *  baseURL: 'http://foo.com'
  * });
  *
- * @param {Object} [options] axios options to pass to the instance when created
+ * @param {Object} [options={}] axios options to pass to the instance when created
  * @returns {AxiosInstance}
  */
 export const createInstance = (options = {}) => {
@@ -133,11 +144,15 @@ export const createInstance = (options = {}) => {
  */
 /* eslint-enable */
 export const setDefaults = ({baseURL, headers} = {}) => {
-  if (baseURL) {
+  if (!!baseURL) {
+    testParameter(baseURL, isString, 'baseURL provided is not a string.', ERROR_TYPES.TYPE);
+
     axios.defaults.baseURL = baseURL;
   }
 
-  if (isPlainObject(headers)) {
+  if (!!headers) {
+    testParameter(headers, isPlainObject, 'headers provided are not an object.', ERROR_TYPES.TYPE);
+
     const currentHeaders = axios.defaults.headers;
     const {
       common,

@@ -80,6 +80,7 @@
             class="sunlight-highlight-javascript linenums">// external dependencies
 import isArray from 'lodash/isArray';
 import isFunction from 'lodash/isFunction';
+import isPlainObject from 'lodash/isPlainObject';
 import {
   routerReducer
 } from 'react-router-redux';
@@ -98,8 +99,14 @@ import {
 
 // constants
 import {
-  ARCO_STATE_KEY
+  ARCO_STATE_KEY,
+  ERROR_TYPES
 } from './constants';
+
+// utils
+import {
+  testParameter
+} from './utils';
 
 const DEFAULT_REDUCERS_WITH_HISTORY = {
   routing: routerReducer
@@ -254,9 +261,9 @@ export const createStore = (modules, {
   middlewares = [],
   thunk = true
 }) => {
-  if (!isArray(modules)) {
-    throw new TypeError('The first parameter must be an array of modules.');
-  }
+  testParameter(modules, isArray, 'The first parameter must be an array of modules.', ERROR_TYPES.TYPE);
+  testParameter(initialState, isPlainObject, 'initialState must be an object.', ERROR_TYPES.TYPE);
+  testParameter(middlewares, isArray, 'middlewares must be an array of functions.', ERROR_TYPES.TYPE);
 
   const mapOfReducers = getReducerMap(modules, !!history);
   const allReducers = combineReducers(mapOfReducers);

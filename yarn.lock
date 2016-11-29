@@ -3608,7 +3608,7 @@ load-json-file@^1.0.0, load-json-file@^1.1.0:
     pinkie-promise "^2.0.0"
     strip-bom "^2.0.0"
 
-loader-utils@^0.2.11, loader-utils@^0.2.16, loader-utils@^0.2.7, loader-utils@~0.2.2:
+loader-utils@^0.2.11, loader-utils@^0.2.16, loader-utils@^0.2.6, loader-utils@^0.2.7, loader-utils@~0.2.2:
   version "0.2.16"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-0.2.16.tgz#f08632066ed8282835dff88dfb52704765adee6d"
   dependencies:
@@ -5632,6 +5632,12 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
+strip-loader@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/strip-loader/-/strip-loader-0.1.2.tgz#5166038181599342a424c62a49bbd21902ce8f33"
+  dependencies:
+    loader-utils "^0.2.6"
+
 style-loader@^0.13.1:
   version "0.13.1"
   resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-0.13.1.tgz#468280efbc0473023cd3a6cd56e33b5a1d7fc3a9"
@@ -6099,6 +6105,10 @@ webpack-sources@^0.1.2:
   dependencies:
     source-list-map "~0.1.0"
     source-map "~0.5.3"
+
+webpack-strip-block@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/webpack-strip-block/-/webpack-strip-block-0.1.0.tgz#bed2d60bc852a38a51076354d771002a3ac06f6e"
 
 webpack@^1.13.1, webpack@^1.13.3:
   version "1.13.3"
