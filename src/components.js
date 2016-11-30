@@ -1,11 +1,6 @@
 // external dependencies
 import isFunction from 'lodash/isFunction';
-import React, {
-  Component
-} from 'react';
-import {
-  findDOMNode
-} from 'react-dom';
+import React from 'react';
 import {
   connect
 } from 'react-redux';
@@ -20,12 +15,13 @@ import {
 // utils
 import {
   getComponentMethods,
-  getPropsAndMethods,
   isReactClass,
   isReactEvent,
-  memoize,
   testParameter
 } from './utils';
+
+// components
+import Component from './Component';
 
 /**
  * @module components
@@ -80,24 +76,6 @@ export const assignChildContext = (component, getChildContext, canAccessThis = f
 /**
  * @private
  *
- * @function assignInstanceValues
- *
- * @description
- * assign the instance values to the component passed
- * 
- * @param {Component} component component to assign instance values to
- * @returns {Component}
- */
-export const assignInstanceValues = (component) => {
-  component.getPropsToPass = memoize(getPropsAndMethods);
-  component.methods = {};
-
-  return component;
-};
-
-/**
- * @private
- *
  * @function connectIfReduxPropertiesExist
  *
  * @description
@@ -126,16 +104,19 @@ export const connectIfReduxPropertiesExist = (component, {
 /**
  * @private
  *
- * @function hasGetPropsToPass
+ * @function getAllPropsToPass
  *
  * @description
- * does the component contain the getPropsToPass method
+ * combine normal props with local methods for all props to pass
  *
- * @param {function} getPropsToPass method to get all props to pass down
- * @returns {boolean}
+ * @param {Component} component component to get the props and local methods from
+ * @param {function} [component._getPropsToPass] method to retrieve combined props
+ * @param {Object} [component._localMethods] local methods assigned to the HOC instance
+ * @param {Object} [component.props] props passed to the HOC
+ * @returns {Object}
  */
-export const hasGetPropsToPass = ({getPropsToPass} = {}) => {
-  return isFunction(getPropsToPass);
+export const getAllPropsToPass = (component) => {
+  return component._getPropsToPass(component.props, component._localMethods);
 };
 
 /**
@@ -147,19 +128,14 @@ export const hasGetPropsToPass = ({getPropsToPass} = {}) => {
  * assign the lifecycle methods to the instance
  *
  * @param {Component|StatefulComponent} component component to assign lifecycle methods to
+ * @param {function} component._getPropsToPass function to retrieve all props to pass down
+ * @param {Object} component._localMethods local methods to add to props passed down
+ * @param {Object} component.props actual props to pass down
  * @param {Object} lifecycleMethods map of lifecycle methods
  * @param {boolean} [canAccessThis=false] can the method access the instance
  * @returns {Component}
  */
 export const assignLifecycleMethods = (component, lifecycleMethods, canAccessThis = false) => {
-  const getAllProps = () => {
-    if (hasGetPropsToPass(component)) {
-      return component.getPropsToPass(component.props, component.methods);
-    }
-
-    return component.props;
-  };
-
   const appliedThis = canAccessThis ? component : undefined;
 
   keys(lifecycleMethods).forEach((key) => {
@@ -167,7 +143,7 @@ export const assignLifecycleMethods = (component, lifecycleMethods, canAccessThi
       `${key} is not a function, skipping assignment to instance.`, ERROR_TYPES.TYPE);
 
     component[key] = (props) => {
-      let args = [getAllProps()];
+      let args = [getAllPropsToPass(component)];
 
       if (props) {
         args.push(props);
@@ -191,20 +167,14 @@ export const assignLifecycleMethods = (component, lifecycleMethods, canAccessThi
  * assign the local methods to the instance
  *
  * @param {Component} component component to assign local methods to
+ * @param {function} component._getPropsToPass function to retrieve all props to pass down
+ * @param {Object} component._localMethods local methods to add to props passed down
  * @param {Object} localMethods map of methods accessible locally through props
  * @returns {Component}
  */
 export const assignLocalMethods = (component, localMethods) => {
-  const getAllProps = () => {
-    if (hasGetPropsToPass(component)) {
-      return component.getPropsToPass(component.props, component.methods);
-    }
-
-    return component.props;
-  };
-
   keys(localMethods).forEach((key) => {
-    component.methods[key] = (...args) => {
+    component._localMethods[key] = (...args) => {
       const [
         event,
         ...restOfArgs
@@ -212,7 +182,7 @@ export const assignLocalMethods = (component, localMethods) => {
 
       const isFirstArgEvent = isReactEvent(event);
 
-      let argsToPass = [getAllProps()];
+      let argsToPass = [getAllPropsToPass(component)];
 
       if (isFirstArgEvent) {
         argsToPass.unshift(event);
@@ -224,30 +194,6 @@ export const assignLocalMethods = (component, localMethods) => {
       return localMethods[key].apply(undefined, argsToPass);
     };
   });
-
-  /**
-   * @private
-   *
-   * @function getDOMNode
-   *
-   * @description
-   * if a selector is passed get the descendant of the component that matches the selector,
-   * else return the DOM node of the component itself
-   *
-   * @param {string} selector
-   * @returns {HTMLElement|null}
-   */
-  component.methods.getDOMNode = (selector) => {
-    const node = findDOMNode(component);
-
-    if (!selector) {
-      return node;
-    }
-
-    if (node) {
-      return node.querySelector(selector);
-    }
-  };
 
   return component;
 };
@@ -291,10 +237,6 @@ export const getStatefulComponent = (PassedComponent, options) => {
         assignChildContext(this, getChildContext, true);
       }
     }
-
-    render() {
-      return super.render(this.props, this.context);
-    }
   }
 
   addPropertyIfExists(StatefulComponent, 'childContextTypes', childContextTypes);
@@ -313,7 +255,7 @@ export const getStatefulComponent = (PassedComponent, options) => {
  * get the stateless component HOC that has local and lifecycle methods based on
  * the options, as well as possibly being connected to redux
  *
- * @param {function} PassedComponent component wrapped by arco
+ * @param {Component|function} PassedComponent component wrapped by arco
  * @param {Object} options options to apply to the HOC created by arco
  * @returns {Component}
  */
@@ -342,7 +284,6 @@ export const getStatelessComponent = (PassedComponent, options) => {
     constructor(...args) {
       super(...args);
 
-      assignInstanceValues(this);
       assignLifecycleMethods(this, lifecycleMethods);
       assignLocalMethods(this, localMethods);
 
@@ -352,7 +293,7 @@ export const getStatelessComponent = (PassedComponent, options) => {
     }
 
     render() {
-      const propsToPass = this.getPropsToPass(this.props, this.methods);
+      const propsToPass = this._getPropsToPass(this.props, this._localMethods);
 
       return (
         <PassedComponent {...propsToPass}/>
@@ -404,7 +345,5 @@ export const createComponent = (PassedComponent, options = {}) => {
 
   return getStatelessComponent(PassedComponent, options);
 };
-
-export {Component as StatefulComponent};
 
 export default createComponent;

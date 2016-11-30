@@ -13,8 +13,11 @@ import {
 } from 'react-redux';
 
 // components
-import createComponent, {
-  StatefulComponent
+import {
+  Component
+} from './Component';
+import {
+  createComponent
 } from './components';
 
 // modules
@@ -108,7 +111,7 @@ export const render = (component, element, store) => {
   ), element);
 };
 
-export {StatefulComponent};
+export {Component};
 export {createComponent};
 export {PropTypes};
 
@@ -145,7 +148,6 @@ export {withRouter};
 
 export {React};
 export {findDOMNode};
-export {React as jsx};
 
 export {createSelector};
 

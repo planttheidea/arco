@@ -176,14 +176,14 @@ While function components are the preferred usage of `arco`, you can use statefu
 
 ```javascript
 import createComponent, {
-  StatefulComponent
+  Component
 } from 'arco';
 
 const componentDidMount = (props) => {
   console.log('Mounted with props: ', props);
 };
 
-class Foo extends StatefulComponent {
+class Foo extends Component {
   state = {
     foo: ''
   };

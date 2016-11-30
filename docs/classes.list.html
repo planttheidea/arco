@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>arco Tutorial: History</title>
+	<title>arco Classes</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -74,69 +74,113 @@
 <div class="row">
 
 	
-	<div class="col-md-12">
+	<div class="col-md-8">
 	
 		<div id="main">
-			<section class="tutorial-section">
+			
+
+	<h1 class="page-title">Classes</h1>
+<section>
 
 <header>
     
-
-    <h2>History</h2>
+        <h2>
+        
+        </h2>
+        
+    
 </header>
 
+
 <article>
-    <p>Creating a history object is useful if your application uses routing (which most do). As such, <code>arco</code> makes the creation of various types of history as painless as possible:</p>
-<ul>
-<li><a href="#standard">Standard</a></li>
-<li><a href="#custom">Custom</a></li>
-<li><a href="#use-with-immutablejs">Use with ImmutableJS</a></li>
-</ul>
-<h4 id="standard">Standard</h4>
-<p>For most applications, use of a standard history is sufficient for routing.</p>
-<pre class="prettyprint source lang-javascript"><code>import {
-  createHistory
-} from 'arco';
+    <div class="container-overview">
+    
+        
 
-export default createHistory('hash');</code></pre><p>There are three types of standard histories:</p>
-<ul>
-<li><a href="https://github.com/ReactTraining/react-router/blob/master/docs/API.md#browserhistory">browser</a> (default) = HTML5 History API, using clean URLs and <code>pushState</code> (Modern browsers)</li>
-<li><a href="https://github.com/ReactTraining/react-router/blob/master/docs/API.md#hashhistory">hash</a> = Include hash in URL (IE9-)</li>
-<li><a href="https://github.com/ReactTraining/react-router/blob/master/docs/API.md#creatememoryhistoryoptions">memory</a> = In-memory history that does not interact with the browser URL<ul>
-<li>Can also pass a second parameter of <code>options</code> to <code>createHistory</code></li>
-</ul>
-</li>
-</ul>
-<h4 id="custom">Custom</h4>
-<p>In the case you want to use a custom history, you can instead pass a function to <code>createHistory</code> and return your own:</p>
-<pre class="prettyprint source lang-javascript"><code>import createHashHistory from 'history/lib/createHashHistory';
-import {
-  createHistory
-} from 'arco';
+        
+<dl class="details">
+    
 
-export default createHistory((useRouterHistory) => {
-  return useRouterHistory(createHashHistory)({
-    queryKey: false
-  });
-});</code></pre><h4 id="use-with-immutablejs">Use with ImmutableJS</h4>
-<p>If you create your <a href="https://planttheidea.github.io/arco/tutorial-Reducers.html">Reducer</a> with <code>isImmutable</code> set to <code>true</code> and you want to sync your history with that store, you should use the provided <code>syncHistoryWithImmutableStore</code> function instead of the standard <code>syncHistoryWithStore</code>.</p>
-<pre class="prettyprint source lang-javascript"><code>import {
-  syncHistoryWithImmutableStore
-} from 'arco';
+	
 
-import history from './history';
-import store from './store';
+	
 
-const syncedHistory = syncHistoryWithImmutableStore(history, store);</code></pre><p>This is a convenience function that performs the standard synching method that <code>redux-immutable</code> requires.</p>
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="Component.html">Component</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 </article>
 
 </section>
+
+
+
 
 		</div>
 	</div>
 
 	<div class="clearfix"></div>
 
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
 	
 
 </div>

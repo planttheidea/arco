@@ -1,5 +1,6 @@
 // external dependencies
 import createComponent, {
+  Component,
   Link,
   PropTypes
 } from '../../src';
@@ -12,38 +13,41 @@ import {
   NAV_ROUTES
 } from '../constants/routes';
 
-const Navigation = ({width = '100%'}) => {
-  const containerStyles = {
-    width
+// the use of this class is not necessary, just used for example purposes
+class Navigation extends Component {
+  static propTypes = {
+    width: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string
+    ])
   };
 
-  return (
-    <nav className={selectors.nav}>
-      <div
-        className={selectors.navItemsContainer}
-        style={containerStyles}
-      >
-        {NAV_ROUTES.map(({title, to}, routeIndex) => {
-          return (
-            <Link
-              className={selectors.navItem}
-              key={`nav-item-${routeIndex}`}
-              to={to}
-            >
-              {title}
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
-  );
-};
+  render({width = '100%'}) {
+    const containerStyles = {
+      width
+    };
 
-Navigation.propTypes = {
-  width: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string
-  ])
-};
+    return (
+      <nav className={selectors.nav}>
+        <div
+          className={selectors.navItemsContainer}
+          style={containerStyles}
+        >
+          {NAV_ROUTES.map(({title, to}, routeIndex) => {
+            return (
+              <Link
+                className={selectors.navItem}
+                key={`nav-item-${routeIndex}`}
+                to={to}
+              >
+                {title}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    );
+  }
+}
 
 export default createComponent(Navigation);

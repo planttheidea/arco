@@ -5,7 +5,6 @@ import {
   addPropertyIfExists,
   assignLifecycleMethods,
   assignChildContext,
-  assignInstanceValues,
   assignLocalMethods,
   connectIfReduxPropertiesExist,
   createComponent,
@@ -63,30 +62,8 @@ test('if assignChildContext binds the correct this object based on the boolean p
   t.is(trueResult, component);
 });
 
-test('if assignInstanceValues assigns the correct property values to the component passed', (t) => {
-  const component = {};
-
-  const result = assignInstanceValues(component);
-
-  t.is(result, component);
-  t.true(isFunction(result.getPropsToPass));
-  t.deepEqual(result.methods, {});
-});
-
 test.todo('assignLocalMethods');
 test.todo('connectIfReduxPropertiesExist');
 test.todo('createComponent');
 test.todo('getStatefulComponent');
 test.todo('getStatelessComponent');
-
-test('if hasGetPropsToPass checks for a property on the object passed that is a function', (t) => {
-  const trueObject = {
-    getPropsToPass() {}
-  };
-  const falseObject = {
-    getPropsToPass: 'foo'
-  };
-
-  t.true(hasGetPropsToPass(trueObject));
-  t.false(hasGetPropsToPass(falseObject));
-});

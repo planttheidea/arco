@@ -1,4 +1,17 @@
 {
+  "babel": {
+    "plugins": [
+      "transform-decorators-legacy",
+      "add-module-exports"
+    ],
+    "presets": [
+      ["latest", {
+        "loose": true
+      }],
+      "stage-2",
+      "react"
+    ]
+  },
   "configHelpUrl": "http://usejsdoc.org/about-configuring-jsdoc.html",
   "markdown": {
     "excludeTags": [
@@ -12,9 +25,11 @@
     "readme": "./README.md",
     "recurse": true,
     "template": "./node_modules/ink-docstrap/template",
-    "tutorials": "./tutorials"
+    "tutorials": "./tutorials",
+    "verbose": true
   },
   "plugins": [
+    "node_modules/jsdoc-babel",
     "plugins/markdown"
   ],
   "source": {
