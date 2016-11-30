@@ -156,7 +156,8 @@ them (based on )</li>
 <li>Import <code>React</code> from the <code>arco</code> package whenever creating a component</li>
 </ul>
 <p><strong>ImmutableJS is not included</strong></p>
-<p>While it is a common paradigm to pair <code>React</code> applications with the library <code>ImmutableJS</code>, it is not included in <code>arco</code> because of its opinionated nature. As such, if you want to use it with your application, you will need to import separately. That said, there are integration options related to your application's <a href="https://planttheidea.github.io/arco/tutorial-History.html">History</a> and <a href="https://planttheidea.github.io/arco/tutorial-Store.html">Store</a> included in <code>arco</code>.</p>
+<p>While it is a common paradigm to pair <code>React</code> applications with the library <code>ImmutableJS</code>, it is not included in <code>arco</code> but is rather considered &quot;opt-in&quot;. There are integration options related to your application's <a href="https://planttheidea.github.io/arco/tutorial-History.html">History</a> and <a href="https://planttheidea.github.io/arco/tutorial-Store.html">Store</a> included in <code>arco</code>, however the package itself is not included in the bundle like <code>react</code> and others are. As such, if you choose to make use of it, you will need to install it yourself.</p>
+<p>That said, Immutable is installed as a dependency to allow for those integration options, so if you are using a bundler like <code>webpack</code> and are not using <code>immutable</code>, it is recommended to set <code>immutable</code> to be an <code>external</code> in your configuration options.</p>
 <h4 id="contributing">Contributing</h4>
 <p>This project is in its infancy, and many more expansion capabilities are there:</p>
 <ul>

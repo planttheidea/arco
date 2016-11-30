@@ -63,7 +63,9 @@ There are a couple things to be aware of when setting up `arco` for your applica
 
 **ImmutableJS is not included**
 
-While it is a common paradigm to pair `React` applications with the library `ImmutableJS`, it is not included in `arco` because of its opinionated nature. As such, if you want to use it with your application, you will need to import separately. That said, there are integration options related to your application's [History](https://planttheidea.github.io/arco/tutorial-History.html) and [Store](https://planttheidea.github.io/arco/tutorial-Store.html) included in `arco`.
+While it is a common paradigm to pair `React` applications with the library `ImmutableJS`, it is not included in `arco` but is rather considered "opt-in". There are integration options related to your application's [History](https://planttheidea.github.io/arco/tutorial-History.html) and [Store](https://planttheidea.github.io/arco/tutorial-Store.html) included in `arco`, however the package itself is not included in the bundle like `react` and others are. As such, if you choose to make use of it, you will need to install it yourself.
+
+That said, Immutable is installed as a dependency to allow for those integration options, so if you are using a bundler like `webpack` and are not using `immutable`, it is recommended to set `immutable` to be an `external` in your configuration options.
 
 #### Contributing
 

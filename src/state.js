@@ -35,48 +35,19 @@ let moduleCache = {};
 /**
  * @private
  *
- * @function asyncErrorActionCreator
+ * @function asyncActionStatusCreator
  *
  * @description
  * create action that will dispatch with the error status as meta
  *
- * @returns {{status: string}}
+ * @param {string} status status to provide for the action
+ * @returns {function(): {status: string}}
  */
-export const asyncErrorActionCreator = () => {
-  return {
-    status: STATUS.ERROR
-  };
-};
-
-/**
- * @private
- *
- * @function asyncRequestActionCreator
- *
- * @description
- * create action that will dispatch with the pending status as meta
- *
- * @returns {{status: string}}
- */
-export const asyncRequestActionCreator = () => {
-  return {
-    status: STATUS.PENDING
-  };
-};
-
-/**
- * @private
- *
- * @function asyncSuccessActionCreator
- *
- * @description
- * create action that will dispatch with the success status as meta
- *
- * @returns {{status: string}}
- */
-export const asyncSuccessActionCreator = () => {
-  return {
-    status: STATUS.SUCCESS
+export const asyncActionStatusCreator = (status) => {
+  return () => {
+    return {
+      status
+    };
   };
 };
 
@@ -192,9 +163,9 @@ export const getCreateAsyncAction = (namespace) => {
     testParameter(name, isString, 'Name of action must be a string.', ERROR_TYPES.TYPE);
     testParameter(payloadHandler, isFunction, 'Payload handler must be a function.', ERROR_TYPES.TYPE);
 
-    const onError = createAction(name, getIdentityValue, asyncErrorActionCreator);
-    const onRequest = createAction(name, getIdentityValue, asyncRequestActionCreator);
-    const onSuccess = createAction(name, getIdentityValue, asyncSuccessActionCreator);
+    const onError = createAction(name, getIdentityValue, asyncActionStatusCreator(STATUS.ERROR));
+    const onRequest = createAction(name, getIdentityValue, asyncActionStatusCreator(STATUS.PENDING));
+    const onSuccess = createAction(name, getIdentityValue, asyncActionStatusCreator(STATUS.SUCCESS));
 
     const lifecycle = {
       onError,
@@ -220,6 +191,8 @@ export const getCreateAsyncAction = (namespace) => {
     action.toString = () => {
       return name;
     };
+
+    moduleCache[namespace].actions[name].action = action;
 
     return action;
   };

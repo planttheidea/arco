@@ -25,6 +25,7 @@
   "dependencies": {
     "axios": "^0.15.3",
     "fast-memoize": "^2.0.2",
+    "immutable": "^3.8.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-redux": "^4.4.6",
@@ -104,12 +105,12 @@
   "scripts": {
     "build": "NODE_ENV=development webpack --progress --colors",
     "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
-    "clean": "rimraf lib && rimraf dist",
+    "clean": "rimraf lib && rimraf dist && rimraf docs",
     "dev": "NODE_ENV=development webpack-dashboard -- webpack-dev-server --config=webpack.config.dev.js",
-    "docs": "jsdoc -c ./jsdoc.config.json",
+    "docs": "jsdoc -c ./jsdoc.config.json && cp img/* docs/img && git add --all",
     "lint": "NODE_ENV=test eslint src",
     "prepublish": "in-publish && npm run prepublish:compile || echo ''",
-    "prepublish:compile": "npm run clean && npm run lint && npm run test:coverage && npm run transpile && npm run build && npm run build:minified",
+    "prepublish:compile": "npm run clean && npm run lint && npm run test:coverage && npm run transpile && npm run build && npm run build:minified && npm run docs",
     "start": "npm run dev",
     "test": "NODE_PATH=. NODE_ENV=test ava --no-cache",
     "test:coverage": "nyc npm test",

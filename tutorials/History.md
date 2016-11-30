@@ -54,4 +54,4 @@ import store from './store';
 const syncedHistory = syncHistoryWithImmutableStore(history, store);
 ```
 
-This is a convenience function that performs the standard synching method that `redux-immutable` requires.
+This is a convenience function that performs the standard syncing method that `redux-immutable` requires.

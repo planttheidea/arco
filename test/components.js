@@ -1,4 +1,5 @@
 import test from 'ava';
+import React from 'react';
 import isFunction from 'lodash/isFunction';
 
 import {
@@ -30,7 +31,46 @@ test('if addPropertyIfExists adds the property to the object passed if the value
   });
 });
 
-test.todo('assignLifecycleMethods');
+test('if assignLifecycleMethods creates functions that are bound to the component passed', (t) => {
+  const component = {};
+  const methods = {
+    componentDidMount() {},
+    componentDidUpdate() {}
+  };
+
+  const result = assignLifecycleMethods(component, methods);
+
+  t.deepEqual(Object.keys(result), ['componentDidMount', 'componentDidUpdate']);
+  t.true(isFunction(result.componentDidMount));
+  t.true(isFunction(result.componentDidUpdate));
+});
+
+test('if assignLifecycleMethods creates functions that are bound to the component passed', (t) => {
+  const component = {
+    _getPropsToPass() {
+      return {};
+    },
+    props: {}
+  };
+  const undefinedObject = {
+    componentDidMount: () => {
+      return this;
+    }
+  };
+  const componentObject = {
+    componentDidMount() {
+      return this;
+    }
+  };
+
+  const undefinedResult = assignLifecycleMethods(component, undefinedObject).componentDidMount();
+
+  t.is(undefinedResult, undefined);
+
+  const componentResult = assignLifecycleMethods(component, componentObject, true).componentDidMount();
+
+  t.is(componentResult, component);
+});
 
 test('if assignChildContext creates a function that is bound to the component passed', (t) => {
   const object = {};
@@ -38,11 +78,15 @@ test('if assignChildContext creates a function that is bound to the component pa
 
   const result = assignChildContext(object, fn);
 
+  t.deepEqual(Object.keys(result), ['getChildContext']);
   t.true(isFunction(result.getChildContext));
 });
 
 test('if assignChildContext binds the correct this object based on the boolean passed', (t) => {
   const component = {
+    _getPropsToPass() {
+      return {};
+    },
     props: {},
     context: {}
   };
@@ -62,8 +106,76 @@ test('if assignChildContext binds the correct this object based on the boolean p
   t.is(trueResult, component);
 });
 
-test.todo('assignLocalMethods');
-test.todo('connectIfReduxPropertiesExist');
+test('if assignLocalMethods creates functions that are bound to the component passed', (t) => {
+  const component = {
+    _localMethods: {}
+  };
+  const methods = {
+    onClickFoo() {}
+  };
+
+  const result = assignLocalMethods(component, methods);
+
+  t.deepEqual(Object.keys(result._localMethods), ['onClickFoo']);
+  t.true(isFunction(result._localMethods.onClickFoo));
+});
+
+test('if connectIfReduxPropertiesExist connects the component only when the correct property exists', (t) => {
+  const Foo = () => {
+    return (
+      <div/>
+    );
+  };
+
+  const dispatch = {
+    mapDispatchToProps: {}
+  };
+  const state = {
+    mapStateToProps() {
+      return {};
+    }
+  };
+  const merge = {
+    mergeProps() {
+      return {};
+    }
+  };
+  const options = {
+    reduxOptions: {}
+  };
+  const foo = {
+    foo: 'bar'
+  };
+
+  const expectedDisplayName = `Connect(${Foo.name})`;
+
+  const dispatchResult = connectIfReduxPropertiesExist(Foo, dispatch);
+
+  t.is(dispatchResult.displayName, expectedDisplayName);
+  t.true(isFunction(dispatchResult.WrappedComponent));
+
+  const stateResult = connectIfReduxPropertiesExist(Foo, state);
+
+  t.is(stateResult.displayName, expectedDisplayName);
+  t.true(isFunction(stateResult.WrappedComponent));
+
+  const mergeResult = connectIfReduxPropertiesExist(Foo, merge);
+
+  t.is(mergeResult.displayName, expectedDisplayName);
+  t.true(isFunction(mergeResult.WrappedComponent));
+
+  const optionsResult = connectIfReduxPropertiesExist(Foo, options);
+
+  t.is(optionsResult.displayName, expectedDisplayName);
+  t.true(isFunction(optionsResult.WrappedComponent));
+
+  const fooResult = connectIfReduxPropertiesExist(Foo, foo);
+
+  t.is(fooResult, Foo);
+  t.is(fooResult.displayName, undefined);
+  t.is(fooResult.WrappedComponent, undefined);
+});
+
 test.todo('createComponent');
 test.todo('getStatefulComponent');
 test.todo('getStatelessComponent');

@@ -1,8 +1,10 @@
 // external dependencies
+import Immutable from 'immutable';
 import isArray from 'lodash/isArray';
 import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
 import {
+  LOCATION_CHANGE,
   routerReducer
 } from 'react-router-redux';
 import {
@@ -32,8 +34,15 @@ import {
   testParameter
 } from './utils';
 
-const DEFAULT_REDUCERS_WITH_HISTORY = {
-  routing: routerReducer
+const IMMUTABLE_ROUTING_REDUCER_INITIAL_STATE = Immutable.fromJS({
+  locationBeforeTransitions: null
+});
+const immutableRoutingReducer = (state = IMMUTABLE_ROUTING_REDUCER_INITIAL_STATE, {payload, type}) => {
+  if (type === LOCATION_CHANGE) {
+    return state.set('locationBeforeTransitions', payload);
+  }
+
+  return state;
 };
 
 /**
@@ -124,12 +133,11 @@ export const getEnhancers = (middlewares = [], hasThunk) => {
  *
  * @param {Array<Object|function>} modules array of modules or reducers to populate the store with
  * @param {boolean} hasHistory whether a history object exists, and therefore should have a router reducer
+ * @param {boolean} isImmutable whether store is immutable or not
  * @returns {Object}
  */
-export const getReducerMap = (modules, hasHistory) => {
-  let moduleMap = hasHistory ? DEFAULT_REDUCERS_WITH_HISTORY : {};
-
-  return modules.reduce((reducers, passedReducer) => {
+export const getReducerMap = (modules, hasHistory, isImmutable) => {
+  const moduleMap = modules.reduce((reducers, passedReducer) => {
     const namespace = passedReducer.namespace;
     const module = isFunction(passedReducer) ? passedReducer : getModules(namespace);
 
@@ -148,7 +156,18 @@ export const getReducerMap = (modules, hasHistory) => {
       ...reducers,
       [namespace]: module.reducer
     };
-  }, moduleMap);
+  }, {});
+
+  if (!hasHistory) {
+    return moduleMap;
+  }
+
+  const routing = !isImmutable ? routerReducer : immutableRoutingReducer;
+
+  return {
+    ...moduleMap,
+    routing
+  };
 };
 
 /**
@@ -193,7 +212,7 @@ export const createStore = (modules, {
 
   const reducerCombiner = isImmutable ? combineImmutableReducers : combineReducers;
 
-  const mapOfReducers = getReducerMap(modules, !!history);
+  const mapOfReducers = getReducerMap(modules, !!history, isImmutable);
   const allReducers = reducerCombiner(mapOfReducers);
   const enhancers = getEnhancers(middlewares, thunk);
 
