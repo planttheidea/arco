@@ -1,15 +1,14 @@
 import test from 'ava';
-import sinon from 'sinon';
 
 import Immutable from 'immutable';
 import isFunction from 'lodash/isFunction';
 import {
   browserHistory,
-  hashHistory
+  hashHistory,
+  useRouterHistory
 } from 'react-router';
 import {
-  LOCATION_CHANGE,
-  syncHistoryWithStore
+  LOCATION_CHANGE
 } from 'react-router-redux';
 import {
   createStore
@@ -69,6 +68,12 @@ test('if createHistory returns the history objects when state histories are used
   const memory = createHistory('memory');
 
   await isHistoryObject(t, memory);
+
+  const custom = createHistory((useRouterHistoryFn) => {
+    return useRouterHistoryFn;
+  });
+
+  t.is(custom, useRouterHistory);
 });
 
 test('if syncHistoryWithImmutableStore will call syncHistoryWithStore with the correct parameters', async (t) => {

@@ -4,10 +4,7 @@ import isPlainObject from 'lodash/isPlainObject';
 import React, {
   PropTypes
 } from 'react';
-import {
-  findDOMNode,
-  render as ReactRender
-} from 'react-dom';
+import ReactDOM from 'react-dom';
 import {
   Provider
 } from 'react-redux';
@@ -104,7 +101,7 @@ export const render = (component, element, store) => {
   testParameter(element, isElement, 'Element passed to render into is not a valid HTML element.', ERROR_TYPES.TYPE);
   testParameter(store, isPlainObject, 'Store passed is not a valid arco store.', ERROR_TYPES.TYPE);
 
-  ReactRender((
+  ReactDOM.render((
     <Provider store={store}>
       {component}
     </Provider>
@@ -147,7 +144,6 @@ export {syncHistoryWithStore};
 export {withRouter};
 
 export {React};
-export {findDOMNode};
 
 export {createSelector};
 
