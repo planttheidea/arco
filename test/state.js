@@ -1,10 +1,13 @@
 import test from 'ava';
+import sinon from 'sinon';
+
 import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
 
 import {
   asyncActionStatusCreator,
   createModule,
+  createNamespacedName,
   getCreateAction,
   getCreateAsyncAction,
   getCreateReducer,
@@ -24,6 +27,16 @@ test('if asyncActionStatusCreator returns a function that returns an object with
   });
 });
 
+test('if createNamespacedName returns a slash-separated string of namespace and name', (t) => {
+  const namespace = 'foo';
+  const name = 'bar';
+
+  const expectedResult = `${namespace}/${name}`;
+  const result = createNamespacedName(namespace, name);
+
+  t.is(result, expectedResult);
+});
+
 test('if createModule will create a module and return create functions for actions and reducer', (t) => {
   const namespace = 'foo_create';
 
@@ -35,6 +48,16 @@ test('if createModule will create a module and return create functions for actio
   t.true(isFunction(result.createAsyncAction));
   t.true(isFunction(result.createReducer));
   t.is(result.namespace, namespace);
+});
+
+test('if createModule throws when the namespace already exists', (t) => {
+  const namespace = 'foo_exists';
+
+  createModule(namespace);
+
+  t.throws(() => {
+    createModule(namespace);
+  });
 });
 
 test('if getCreateAction returns a function which will create a redux action', (t) => {
@@ -50,6 +73,7 @@ test('if getCreateAction returns a function which will create a redux action', (
   const action = actionCreator(FOO_BAR);
 
   t.true(isFunction(action));
+  t.is(action.toString(), `${namespace}/${FOO_BAR}`);
 
   const module = getModules(namespace);
   const actionObject = module.actions[FOO_BAR];
@@ -70,7 +94,7 @@ test('if getCreateAsyncAction will create three actions related to the status of
   t.true(isFunction(actionCreator));
 
   const FOO_BAR = 'FOO_BAR';
-  const action = actionCreator(FOO_BAR, (lifecycle) => {
+  const handler = sinon.spy((lifecycle) => {
     const {
       onRequest,
       onError,
@@ -82,7 +106,14 @@ test('if getCreateAsyncAction will create three actions related to the status of
     t.true(isFunction(onSuccess));
   });
 
+  const action = actionCreator(FOO_BAR, handler);
+
+  action('foo');
+
+  t.true(handler.calledOnce);
+
   t.true(isFunction(action));
+  t.is(action.toString(), `${namespace}/${FOO_BAR}`);
   t.true(isFunction(action.onRequest));
   t.true(isFunction(action.onError));
   t.true(isFunction(action.onSuccess));
@@ -111,15 +142,29 @@ test('if getCreateReducer returns a function that will create a reducer for the 
   const initialState = {
     foo: 'bar'
   };
-
-  const reducer = createReducer(initialState, (state, action) => {
+  const handler = (state, action) => {
     return state;
-  });
+  };
+
+  const spy = sinon.spy(handler);
+
+  const functionalReducer = createReducer(initialState, spy);
+
+  t.true(isFunction(functionalReducer));
+
+  functionalReducer(initialState, {});
+
+  t.true(spy.calledOnce);
 
   const module = getModules(namespace);
 
-  t.is(module.reducer, reducer);
-  t.is(reducer.namespace, namespace);
+  t.is(module.reducer, functionalReducer);
+  t.is(functionalReducer.namespace, namespace);
+
+  const plainObjectReducer = createReducer(initialState, {});
+
+  t.is(module.reducer, plainObjectReducer);
+  t.is(plainObjectReducer.namespace, namespace);
 });
 
 test('if getModules returns a module if string is passed, else returns all modules', (t) => {

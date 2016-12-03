@@ -54,6 +54,22 @@ export const asyncActionStatusCreator = (status) => {
 /**
  * @private
  *
+ * @function createNamespacedName
+ *
+ * @description
+ * create the namespaced version of the action name
+ *
+ * @param {string} namespace namespace of the module
+ * @param {string} name name of the action
+ * @returns {string}
+ */
+export const createNamespacedName = (namespace, name) => {
+  return `${namespace}/${name}`;
+};
+
+/**
+ * @private
+ *
  * @function getCreateAction
  *
  * @description
@@ -90,7 +106,7 @@ export const getCreateAction = (namespace) => {
     testParameter(payloadCreator, isFunction, 'Payload handler must be a function.', ERROR_TYPES.TYPE);
     testParameter(metaCreator, testMetaHandler, 'meta handler must be a function.', ERROR_TYPES.TYPE);
 
-    const constantName = `${namespace}/${name}`;
+    const constantName = createNamespacedName(namespace, name);
     const action = createReduxAction(constantName, payloadCreator, metaCreator);
 
     moduleCache[namespace].actions[name] = {
@@ -182,6 +198,8 @@ export const getCreateAsyncAction = (namespace) => {
     action.onRequest = onRequest;
     action.onSuccess = onSuccess;
 
+    const actionName = createNamespacedName(namespace, name);
+
     /**
      * set the toString to return the name passed, so it will work
      * with createReducer
@@ -189,7 +207,7 @@ export const getCreateAsyncAction = (namespace) => {
      * @returns {string}
      */
     action.toString = () => {
-      return name;
+      return actionName;
     };
 
     moduleCache[namespace].actions[name].action = action;
