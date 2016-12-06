@@ -19,8 +19,6 @@ import {
   ROUTES
 } from './constants/routes';
 
-const div = document.createElement('div');
-
 const syncedHistory = syncHistoryWithStore(history, store);
 
 render((
@@ -51,6 +49,4 @@ render((
       })}
     </Route>
   </Router>
-), div, store);
-
-document.body.appendChild(div);
+), document.body, store);

@@ -96,7 +96,7 @@ import store from 'constants/store';
 
 render((
   &lt;App/>
-), document.querySelector('#app-container'), store);</code></pre><p>Internally, the Component is wrapped with the <code>Provider</code> in <code>react-redux</code> so that the store is automatically available.</p>
+), document.body, store);</code></pre><p>Internally, the Component is wrapped with the <code>Provider</code> in <code>react-redux</code> so that the store is automatically available. One additional thing to note is that unlike in standard <code>react</code>, <code>document.body</code> is a valid HTML element to render to.</p>
 </article>
 
 </section>

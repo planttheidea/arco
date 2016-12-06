@@ -142,7 +142,54 @@ them (based on )</li>
 <li><a href="http://planttheidea.github.io/arco/tutorial-Selectors.html">Selectors</a>: memoized selectors for computed data to keep your stored state small (based on <code>reselect</code>)</li>
 <li><a href="http://planttheidea.github.io/arco/tutorial-Store.html">Store</a>: your <code>redux</code> store which encompasses the state of your entire application</li>
 </ul>
-<h4 id="setup">Setup</h4>
+<h4 id="hello-world-example">Hello World example</h4>
+<pre class="prettyprint source lang-javascript"><code>// import from one application
+import createComponent, { createModule, render } from 'arco';
+
+// create a module for a piece of functionality in your state
+const app = createModule('app');
+
+// create actions for that module
+const sayHello = app.createAction('SAY_HELLO');
+
+// and then a reducer for that module
+app.createReducer({hasSaidHello: false}, {
+    [sayHello](state) {
+        return {
+            ...state,
+            hasSaidHello: true
+        };
+    }
+});
+
+// create your store from the module
+const store = createStore([app]);
+
+// build your components as functional components
+const App = ({hasSaidHello, sayHello}) => {
+    return (
+        &lt;div>            
+            &lt;button onClick={sayHello} type=&quot;button&quot;>
+                Say hello
+            &lt;/button>
+
+            {hasSaidHello && &lt;h1>Hello World!&lt;/h1>}
+        &lt;/div>
+    );
+};
+
+// create the component with options that allow connecting to lifecycle methods and the redux store=
+const ConnectedApp = createComponent(App, {
+    mapStateToProps({app}) {
+        return app;
+    },
+    mapDispatchToProps: {
+        sayHello
+    }
+});
+
+// render in browser, pre-wired with the store
+render(&lt;ConnectedApp/>, document.body, store);</code></pre><h4 id="setup">Setup</h4>
 <p>There are a couple things to be aware of when setting up <code>arco</code> for your application.</p>
 <p><strong>React global</strong></p>
 <p><code>arco</code> expects there to be a global <code>React</code> object for it to render components, and if you don't provide it then you will receive a <code>React is not defined</code> error when attempting to render. There are two ways to fix this error:</p>

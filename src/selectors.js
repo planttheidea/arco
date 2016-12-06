@@ -61,6 +61,24 @@ export const getIdentityValue = (value) => {
 /**
  * @private
  *
+ * @function getSelectorGenerator
+ *
+ * @description
+ * get the generator for the selector based on the customMemozer being a function or not
+ *
+ * @param {function} customMemoizer memoizer function to use instead of the default
+ * @param {Object} options additional options to use when creating the selector generator
+ * @returns {function}
+ */
+export const getSelectorGenerator = (customMemoizer, options) => {
+  return isFunction(customMemoizer)
+    ? createSelectorCreator(customMemoizer, ...options)
+    : createReselectSelector;
+};
+
+/**
+ * @private
+ *
  * @function getStructuredValue
  *
  * @description
@@ -144,27 +162,24 @@ export const getStructuredSelector = ({keys, paths}, selectorGenerator) => {
  *
  * @param {Array<string>|{keys: Array<string>, paths: Array<string>}} properties properties to retrieve from state
  * @param {function} [getComputedValue=getIdentityValue] method for getting the computed value from the properties
- * @param {function} [customMemoize=null] custom memoizer function to use in place of the default
- * @param {function} [customMemoizeOptions=null] additional options for using the custom memoizer option
+ * @param {function} [customMemoizer=null] custom memoizer function to use in place of the default
+ * @param {Object} [customMemoizerOptions={}] additional options for using the custom memoizer option
  * @returns {function}
  */
 export const createSelector = (
   properties = [],
   getComputedValue = getIdentityValue,
-  customMemoize = null,
-  customMemoizeOptions = null
+  customMemoizer = null,
+  customMemoizerOptions = {}
 ) => {
-  const selectorGenerator = isFunction(customMemoize)
-    ? createSelectorCreator(customMemoize, ...customMemoizeOptions)
-    : createReselectSelector;
+  const selectorGenerator = getSelectorGenerator(customMemoizer, customMemoizerOptions);
 
   if (isPlainObject(properties)) {
     return getStructuredSelector(properties, selectorGenerator);
   }
 
-  testParameter(properties, isArray, 'Properties passed must be either an object of keys and paths or an array of paths.',
-    ERROR_TYPES.TYPE);
-
+  testParameter(properties, isArray, 'Properties passed must be either an object of keys and paths or an ' +
+    'array of paths.', ERROR_TYPES.TYPE);
   testParameter(getComputedValue, isFunction, 'Computed value passed must be a function.', ERROR_TYPES.TYPE);
 
   return getStandardSelector(properties, selectorGenerator, getComputedValue);

@@ -63,6 +63,7 @@
     "jsdoc": "^3.4.3",
     "jsdoc-babel": "^0.2.1",
     "lodash-webpack-plugin": "^0.10.6",
+    "mock-dom-storage": "^1.0.0",
     "node-uuid": "^1.4.7",
     "normalize.css": "^5.0.0",
     "nyc": "^10.0.0",

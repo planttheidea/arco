@@ -1,14 +1,14 @@
 import test from 'ava';
-import isFunction from 'lodash/isFunction';
+import sinon from 'sinon';
 
-import {
-  createSelector as createReduxSelector
-} from 'reselect';
+import isFunction from 'lodash/isFunction';
+import * as reselect from 'reselect';
 
 import {
   createIdentitySelector,
   createSelector,
   getIdentityValue,
+  getSelectorGenerator,
   getStandardSelector,
   getStructuredSelector,
   getStructuredValue
@@ -30,7 +30,28 @@ test('if createIdentitySelector creates a function that returns the identity pro
   t.is(result, bar);
 });
 
-test.todo('createSelector');
+test('if createSelector creates a structured selector when properties is an object, and a standard selector when an array', (t) => {
+  const state = {
+    foo: 'bar'
+  };
+
+  const standardProperties = ['foo'];
+  const standardSelector = createSelector(standardProperties);
+  const standardResult = standardSelector(state);
+
+  t.is(standardResult, state.foo);
+
+  const structuredProperties = {
+    keys: ['baz'],
+    paths: ['foo']
+  };
+  const structredSelector = createSelector(structuredProperties);
+  const structuredResult = structredSelector(state);
+
+  t.deepEqual(structuredResult, {
+    baz: state.foo
+  });
+});
 
 test('if getIdentityValue returns the value passed directly', (t) => {
   const object = {
@@ -42,9 +63,24 @@ test('if getIdentityValue returns the value passed directly', (t) => {
   t.is(result, object);
 });
 
+test('if getSelectorGenerator returns a custom memoizer when passed, otherwise returns the default creator', (t) => {
+  const defaultResult = getSelectorGenerator(null, null);
+
+  t.is(defaultResult, reselect.createSelector);
+
+  const spy = sinon.spy(reselect, 'createSelectorCreator');
+
+  const customResult = getSelectorGenerator(() => {}, {});
+
+  t.not(defaultResult, customResult);
+  t.true(spy.calledOnce);
+
+  spy.restore();
+});
+
 test('if getStandardSelector will return a function that will be a selector for the value passed', (t) => {
   const paths = ['foo.bar'];
-  const selectorGenerator = createReduxSelector;
+  const selectorGenerator = reselect.createSelector;
   const getValue = (value) => {
     return !!value;
   };
@@ -66,9 +102,7 @@ test('if getStructuredSelector will return a function that will be a structured 
     keys: ['notFoo'],
     paths: ['foo.bar']
   };
-  const selectorGenerator = createReduxSelector;
-
-  const selector = getStructuredSelector(paths, selectorGenerator);
+  const selector = getStructuredSelector(paths, reselect.createSelector);
 
   t.true(isFunction(selector));
 

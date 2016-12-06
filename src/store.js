@@ -37,7 +37,8 @@ import {
 const IMMUTABLE_ROUTING_REDUCER_INITIAL_STATE = Immutable.fromJS({
   locationBeforeTransitions: null
 });
-const immutableRoutingReducer = (state = IMMUTABLE_ROUTING_REDUCER_INITIAL_STATE, {payload, type}) => {
+
+export const immutableRouterReducer = (state = IMMUTABLE_ROUTING_REDUCER_INITIAL_STATE, {payload, type}) => {
   if (type === LOCATION_CHANGE) {
     return state.set('locationBeforeTransitions', payload);
   }
@@ -96,7 +97,7 @@ export const createRestorableStateStore = (reducers, enhancers, initialState) =>
 /**
  * @private
  *
- * @function getEnhancers
+ * @function getComposedEnhancers
  *
  * @description
  * get the enhancers used in the store based on the middlewares passed
@@ -104,9 +105,9 @@ export const createRestorableStateStore = (reducers, enhancers, initialState) =>
  *
  * @param {Array<function>} middlewares array of middlewares to be applied to the store
  * @param {boolean} hasThunk whether to use redux-thunk middleware
- * @returns {function}
+ * @returns {function|undefined}
  */
-export const getEnhancers = (middlewares = [], hasThunk) => {
+export const getComposedEnhancers = (middlewares = [], hasThunk) => {
   let enhancers = [...middlewares];
 
   if (hasThunk) {
@@ -114,7 +115,7 @@ export const getEnhancers = (middlewares = [], hasThunk) => {
   }
 
   if (!enhancers.length) {
-    return undefined;
+    return;
   }
 
   const composeEnhancers = (window && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
@@ -162,7 +163,7 @@ export const getReducerMap = (modules, hasHistory, isImmutable) => {
     return moduleMap;
   }
 
-  const routing = !isImmutable ? routerReducer : immutableRoutingReducer;
+  const routing = !isImmutable ? routerReducer : immutableRouterReducer;
 
   return {
     ...moduleMap,
@@ -205,7 +206,7 @@ export const createStore = (modules, {
   isImmutable = false,
   middlewares = [],
   thunk = true
-}) => {
+} = {}) => {
   testParameter(modules, isArray, 'The first parameter must be an array of modules.', ERROR_TYPES.TYPE);
   testParameter(initialState, isPlainObject, 'initialState must be an object.', ERROR_TYPES.TYPE);
   testParameter(middlewares, isArray, 'middlewares must be an array of functions.', ERROR_TYPES.TYPE);
@@ -214,7 +215,7 @@ export const createStore = (modules, {
 
   const mapOfReducers = getReducerMap(modules, !!history, isImmutable);
   const allReducers = reducerCombiner(mapOfReducers);
-  const enhancers = getEnhancers(middlewares, thunk);
+  const enhancers = getComposedEnhancers(middlewares, thunk);
 
   if (!autoRestore) {
     return createReduxStore(allReducers, initialState, enhancers);

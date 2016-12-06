@@ -161,6 +161,26 @@ import {
  */
 
 /**
+ * @private
+ *
+ * @function getAppContainerDiv
+ *
+ * @description
+ * get the div to render into and inject it into the DOM
+ *
+ * @returns {Element}
+ */
+export const getAppContainerDiv = () => {
+  const div = document.createElement('div');
+  
+  div.id = 'app-container';
+
+  document.body.appendChild(div);
+  
+  return div;
+};
+
+/**
  * @function render
  *
  * @description
@@ -186,6 +206,10 @@ export const render = (component, element, store) => {
   testParameter(component, isReactElement, 'Component passed is not a valid React element.', ERROR_TYPES.TYPE);
   testParameter(element, isElement, 'Element passed to render into is not a valid HTML element.', ERROR_TYPES.TYPE);
   testParameter(store, isPlainObject, 'Store passed is not a valid arco store.', ERROR_TYPES.TYPE);
+  
+  if (element.tagName.toLowerCase() === 'body') {
+    element = getAppContainerDiv();
+  }
 
   ReactDOM.render((
     &lt;Provider store={store}>

@@ -47,6 +47,58 @@ them (based on )
 * [Selectors](http://planttheidea.github.io/arco/tutorial-Selectors.html): memoized selectors for computed data to keep your stored state small (based on `reselect`)
 * [Store](http://planttheidea.github.io/arco/tutorial-Store.html): your `redux` store which encompasses the state of your entire application
 
+#### Hello World example
+
+```javascript
+// import from one application
+import createComponent, { createModule, render } from 'arco';
+
+// create a module for a piece of functionality in your state
+const app = createModule('app');
+
+// create actions for that module
+const sayHello = app.createAction('SAY_HELLO');
+
+// and then a reducer for that module
+app.createReducer({hasSaidHello: false}, {
+	[sayHello](state) {
+		return {
+			...state,
+			hasSaidHello: true
+		};
+	}
+});
+
+// create your store from the module
+const store = createStore([app]);
+
+// build your components as functional components
+const App = ({hasSaidHello, sayHello}) => {
+	return (
+		<div>			
+			<button onClick={sayHello} type="button">
+				Say hello
+			</button>
+			
+			{hasSaidHello && <h1>Hello World!</h1>}
+		</div>
+	);
+};
+
+// create the component with options that allow connecting to lifecycle methods and the redux store=
+const ConnectedApp = createComponent(App, {
+	mapStateToProps({app}) {
+		return app;
+	},
+	mapDispatchToProps: {
+		sayHello
+	}
+});
+
+// render in browser, pre-wired with the store
+render(<ConnectedApp/>, document.body, store);
+```
+
 #### Setup
 
 There are a couple things to be aware of when setting up `arco` for your application.

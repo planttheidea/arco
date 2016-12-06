@@ -10,7 +10,7 @@ import store from 'constants/store';
 
 render((
   <App/>
-), document.querySelector('#app-container'), store);
+), document.body, store);
 ```
 
-Internally, the Component is wrapped with the `Provider` in `react-redux` so that the store is automatically available.
+Internally, the Component is wrapped with the `Provider` in `react-redux` so that the store is automatically available. One additional thing to note is that unlike in standard `react`, `document.body` is a valid HTML element to render to.
