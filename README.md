@@ -59,7 +59,7 @@ const app = createModule('app');
 // create actions for that module
 const sayHello = app.createAction('SAY_HELLO');
 
-// and then a reducer for that module
+// create a reducer for that module
 app.createReducer({hasSaidHello: false}, {
 	[sayHello](state) {
 		return {
@@ -69,7 +69,7 @@ app.createReducer({hasSaidHello: false}, {
 	}
 });
 
-// create your store from the module
+// create your store from an array of modules (or the module's reducers)
 const store = createStore([app]);
 
 // build your components as functional components
