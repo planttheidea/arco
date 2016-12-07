@@ -37,7 +37,7 @@
     "redux-thunk": "^2.1.0",
     "reselect": "^2.5.4"
   },
-  "description": "State management sanity with minimal effort",
+  "description": "A React+Redux framework with standards, conventions, and far less boilerplate",
   "devDependencies": {
     "autoprefixer": "^6.5.3",
     "ava": "^0.17.0",
@@ -118,5 +118,5 @@
     "transpile": "babel src --out-dir lib",
     "validate": "npm ls"
   },
-  "version": "0.1.0"
+  "version": "0.1.1"
 }
