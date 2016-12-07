@@ -1,6 +1,6 @@
 ![arco](img/arco.png)
 
-A React+Redux framework to ease the fatigue
+A React+Redux framework with standards, conventions, and far less boilerplate
 
 #### Installation
 
