@@ -1,5 +1,13 @@
 import test from 'ava';
-import React from 'react';
+import {
+  mount,
+  shallow
+} from 'enzyme';
+import React, {
+  PropTypes
+} from 'react';
+import sinon from 'sinon';
+
 import isFunction from 'lodash/isFunction';
 
 import {
@@ -13,6 +21,8 @@ import {
   getStatelessComponent,
   hasGetPropsToPass
 } from 'src/components';
+
+import Component from 'src/Component';
 
 test('if addPropertyIfExists adds the property to the object passed if the value exists', (t) => {
   const object = {};
@@ -176,6 +186,172 @@ test('if connectIfReduxPropertiesExist connects the component only when the corr
   t.is(fooResult.WrappedComponent, undefined);
 });
 
-test.todo('createComponent');
-test.todo('getStatefulComponent');
-test.todo('getStatelessComponent');
+test('if createComponent creates a stateless higher-order component when the component passed is not a class', (t) => {
+  const Foo = () => <div/>;
+
+  const Result = createComponent(Foo);
+
+  t.false(Foo.isPrototypeOf(Result));
+
+  const wrapper = shallow(<Result/>);
+
+  t.is(wrapper.find(Foo).length, 1);
+});
+
+test('if createComponent extends the component when the component passed is a class', (t) => {
+  class Foo extends Component {
+    render() {
+      return <div/>;
+    }
+  }
+
+  const Result = createComponent(Foo);
+
+  t.true(Foo.isPrototypeOf(Result));
+});
+
+test('if getStatefulComponent extends the passed component', (t) => {
+  class Foo extends Component {
+    render() {
+      return <div/>;
+    }
+  }
+
+  const Result = getStatefulComponent(Foo, {});
+
+  t.true(Foo.isPrototypeOf(Result));
+});
+
+test('if getStatefulComponent assigns lifecycle methods when passed as options', (t) => {
+  class Foo extends Component {
+    render() {
+      return <div/>;
+    }
+  }
+  const stub = sinon.stub();
+
+  const Result = getStatefulComponent(Foo, {
+    componentDidMount: stub
+  });
+
+  mount(<Result/>);
+
+  t.true(stub.calledOnce);
+});
+
+test('if getStatefulComponent adds propTypes, contextTypes, and childContextTypes appropriately if passed', (t) => {
+  class Foo extends Component {
+    render() {
+      return <div/>;
+    }
+  }
+
+  const propTypes = {
+    foo: PropTypes.string
+  };
+  const contextTypes = {
+    bar: PropTypes.string
+  };
+  const childContextTypes = {
+    baz: PropTypes.string
+  };
+  const getChildContext = sinon.spy(() => {
+    return {
+      baz: 'foo'
+    };
+  });
+
+  const Result = getStatefulComponent(Foo, {
+    propTypes,
+    contextTypes,
+    childContextTypes,
+    getChildContext
+  });
+
+  t.deepEqual(Result.childContextTypes, childContextTypes);
+  t.deepEqual(Result.propTypes, propTypes);
+  t.deepEqual(Result.contextTypes, contextTypes);
+
+  mount(<Result/>);
+
+  t.true(getChildContext.calledOnce);
+});
+
+test('if getStatelessComponent wraps the passed component in a higher-order component', (t) => {
+  const Foo = () => <div/>;
+
+  const Result = getStatelessComponent(Foo, {});
+
+  t.true(Component.isPrototypeOf(Result));
+});
+
+test('if getStatelessComponent assigns lifecycle methods when passed as options', (t) => {
+  const Foo = () => <div/>;
+  const stub = sinon.stub();
+
+  const Result = getStatelessComponent(Foo, {
+    componentDidMount: stub
+  });
+
+  mount(<Result/>);
+
+  t.true(stub.calledOnce);
+});
+
+test('if getStatelessComponent assigns local methods when passed as options and passes them down as props', (t) => {
+  const Foo = ({onClickButton}) => {
+    return (
+      <div>
+        <button
+          className="button"
+          onClick={onClickButton}
+        />
+      </div>
+    )
+  };
+  const stub = sinon.stub();
+
+  const Result = getStatelessComponent(Foo, {
+    onClickButton: stub
+  });
+
+  const wrapper = mount(<Result/>);
+
+  wrapper.find('.button').simulate('click');
+
+  t.true(stub.calledOnce);
+});
+
+test('if getStatelessComponent adds propTypes, contextTypes, and childContextTypes appropriately if passed', (t) => {
+  const Foo = () => <div/>;
+
+  const propTypes = {
+    foo: PropTypes.string
+  };
+  const contextTypes = {
+    bar: PropTypes.string
+  };
+  const childContextTypes = {
+    baz: PropTypes.string
+  };
+  const getChildContext = sinon.spy(() => {
+    return {
+      baz: 'foo'
+    };
+  });
+
+  const Result = getStatelessComponent(Foo, {
+    propTypes,
+    contextTypes,
+    childContextTypes,
+    getChildContext
+  });
+
+  t.deepEqual(Result.childContextTypes, childContextTypes);
+  t.deepEqual(Foo.propTypes, propTypes);
+  t.deepEqual(Foo.contextTypes, contextTypes);
+
+  mount(<Result/>);
+
+  t.true(getChildContext.calledOnce);
+});

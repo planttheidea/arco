@@ -32,6 +32,29 @@ test('if addWindowUnloadListener adds an event listener to the window object', (
   stub.restore();
 });
 
+test('if addWindowUnloadListener will get the store state and save it in sessionStorage', (t) => {
+  const state = {
+    foo: 'bar'
+  };
+  const store = {
+    getState() {
+      return state;
+    }
+  };
+
+  addWindowUnloadListener(store);
+
+  const unloadEvent = document.createEvent('Event');
+
+  unloadEvent.initEvent('beforeunload', true, true);
+
+  window.dispatchEvent(unloadEvent);
+
+  const result = window.sessionStorage.getItem(ARCO_STATE_KEY);
+
+  t.is(result, JSON.stringify(state));
+});
+
 test('if createRestorableStateStore will create a redux store', (t) => {
   const enhancers = getComposedEnhancers([], true);
   const initialState = {

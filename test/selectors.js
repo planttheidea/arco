@@ -30,6 +30,14 @@ test('if createIdentitySelector creates a function that returns the identity pro
   t.is(result, bar);
 });
 
+test('if createIdentitySelector creates the function passed if it is a function', (t) => {
+  const fn = () => {};
+  const selector = createIdentitySelector(fn);
+
+  t.true(isFunction(selector));
+  t.is(selector, fn);
+});
+
 test('if createSelector creates a structured selector when properties is an object, and a standard selector when an array', (t) => {
   const state = {
     foo: 'bar'
@@ -97,6 +105,7 @@ test('if getStandardSelector will return a function that will be a selector for 
 
   t.true(selector(state));
 });
+
 test('if getStructuredSelector will return a function that will be a structured selector for the value passed', (t) => {
   const paths = {
     keys: ['notFoo'],
@@ -116,6 +125,17 @@ test('if getStructuredSelector will return a function that will be a structured 
 
   t.deepEqual(result, {
     notFoo: 'baz'
+  });
+});
+
+test('if getStructuredSelector throws if keys and paths do not have the same length', (t) => {
+  const paths = {
+    keys: ['notFoo', 'bar'],
+    paths: ['foo']
+  };
+
+  t.throws(() => {
+    getStructuredSelector(paths, reselect.createSelector);
   });
 });
 
