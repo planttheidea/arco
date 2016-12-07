@@ -130,7 +130,7 @@ This project is in its infancy, and many more expansion capabilities are there:
 * Predefined webpack / ESLint / Babel config
 * CLI interface to automate creation of app scaffold
 
-I welcome [any and all ideas](https://github.com/planttheidea/arco/issues), but especially PRs.
+I welcome [any and all ideas](https://github.com/planttheidea/arco/issues), but especially [pull requests](https://github.com/planttheidea/arco/pulls).
 
 #### Development
 
