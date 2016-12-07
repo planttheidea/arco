@@ -2,6 +2,10 @@
 
 A React+Redux framework with standards, conventions, and far less boilerplate
 
+<img src="https://img.shields.io/badge/build-passing-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/coverage-98.29%25-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/license-MIT-blue.svg"/>
+
 #### Installation
 
 ```
