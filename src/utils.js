@@ -1,5 +1,5 @@
 // external dependencies
-import fastMemoize from 'fast-memoize';
+import moize from 'moize';
 import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
 import noop from 'lodash/noop';
@@ -197,7 +197,7 @@ export const memoizeSerializer = function() {
  * @returns {function}
  */
 export const memoize = (fn) => {
-  return fastMemoize(fn, {
+  return moize(fn, {
     serializer: memoizeSerializer
   });
 };
