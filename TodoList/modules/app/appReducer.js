@@ -1,9 +1,7 @@
-import uuid from 'node-uuid';
+import uuid from 'uuid/v4';
 
 // selectors
-import {
-  getFilterFromPath
-} from '../../selectors/todos';
+import {getFilterFromPath} from '../../selectors/todos';
 
 // module
 import module, {
@@ -11,13 +9,13 @@ import module, {
   clearRecentlyAdded,
   deleteTodo,
   setFilter,
-  toggleTodoDone
+  toggleTodoDone,
 } from './appActions';
 
 const INITIAL_STATE = {
   filter: null,
   recentlyAdded: null,
-  todos: []
+  todos: [],
 };
 
 /**
@@ -29,19 +27,16 @@ const INITIAL_STATE = {
  */
 const addTodoHandler = (state, {payload}) => {
   const todoObject = {
-    id: uuid.v4(),
+    id: uuid(),
     isDone: false,
-    value: payload
+    value: payload,
   };
-  const todos = [
-    ...state.todos,
-    todoObject
-  ];
+  const todos = [...state.todos, todoObject];
 
   return {
     ...state,
     recentlyAdded: payload,
-    todos
+    todos,
   };
 };
 
@@ -51,12 +46,10 @@ const addTodoHandler = (state, {payload}) => {
  * @param {Object} state
  * @returns {{recentlyAdded: null}}
  */
-const clearRecentlyAddedHandler = (state) => {
-  return {
-    ...state,
-    recentlyAdded: null
-  };
-};
+const clearRecentlyAddedHandler = (state) => ({
+  ...state,
+  recentlyAdded: null,
+});
 
 /**
  * remove a todo from the list of todos
@@ -66,18 +59,13 @@ const clearRecentlyAddedHandler = (state) => {
  * @returns {{todos: Array<Object>}}
  */
 const deleteTodoHandler = (state, {payload}) => {
-  const todoIndex = state.todos.findIndex(({id}) => {
-    return id === payload;
-  });
+  const todoIndex = state.todos.findIndex(({id}) => id === payload);
 
-  const todos = [
-    ...state.todos.slice(0, todoIndex),
-    ...state.todos.slice(todoIndex + 1)
-  ];
+  const todos = [...state.todos.slice(0, todoIndex), ...state.todos.slice(todoIndex + 1)];
 
   return {
     ...state,
-    todos
+    todos,
   };
 };
 
@@ -90,12 +78,12 @@ const deleteTodoHandler = (state, {payload}) => {
  */
 const setFilterHandler = (state, {payload}) => {
   const filter = getFilterFromPath({
-    pathname: payload
+    pathname: payload,
   });
 
   return {
     ...state,
-    filter
+    filter,
   };
 };
 
@@ -107,23 +95,21 @@ const setFilterHandler = (state, {payload}) => {
  * @returns {{todos: Array<Object>}}
  */
 const toggleTodoDoneHandler = (state, {payload}) => {
-  const todoIndex = state.todos.findIndex(({id}) => {
-    return id === payload;
-  });
+  const todoIndex = state.todos.findIndex(({id}) => id === payload);
   const todo = state.todos[todoIndex];
 
   const todos = [
     ...state.todos.slice(0, todoIndex),
     {
       ...todo,
-      isDone: !todo.isDone
+      isDone: !todo.isDone,
     },
-    ...state.todos.slice(todoIndex + 1)
+    ...state.todos.slice(todoIndex + 1),
   ];
 
   return {
     ...state,
-    todos
+    todos,
   };
 };
 
@@ -132,5 +118,5 @@ export default module.createReducer(INITIAL_STATE, {
   [clearRecentlyAdded]: clearRecentlyAddedHandler,
   [deleteTodo]: deleteTodoHandler,
   [setFilter]: setFilterHandler,
-  [toggleTodoDone]: toggleTodoDoneHandler
+  [toggleTodoDone]: toggleTodoDoneHandler,
 });

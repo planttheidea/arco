@@ -2,61 +2,53 @@
 
 const path = require('path');
 
-const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WebpackDashboard = require('webpack-dashboard/plugin');
 
 const defaultConfig = require('./webpack.config.js');
 
 const PORT = 3000;
 
-const preLoaders = defaultConfig.module.preLoaders.map((preLoader) => {
-  return Object.assign({}, preLoader, {
-    cacheable: true
-  });
-});
-
-const loaders = defaultConfig.module.loaders
-  .map((loader) => {
-    if (loader.loader === 'babel') {
-      return Object.assign({}, loader, {
-        cacheable: true,
-        include: [
-          /src/,
-          /TodoList/
-        ],
+const rules = defaultConfig.module.rules
+  .map((rule) => {
+    if (rule.loader === 'babel-loader') {
+      return Object.assign({}, rule, {
+        include: [/src/, /TodoList/],
         query: {
-          plugins: [
-            'transform-decorators-legacy'
-          ]
+          plugins: ['transform-decorators-legacy']
         }
       });
     }
 
-    return Object.assign({}, loader, {
-      cacheable: true
-    });
+    if (rule.loader === 'eslint-loader') {
+      return Object.assign({}, rule, {
+        options: Object.assign({}, rule.options, {
+          failOnWarning: false
+        })
+      });
+    }
+
+    return rule;
   })
   .concat([
     {
-      cacheable: true,
-      include: [
-        /node_modules/,
-        /TodoList/
-      ],
-      loaders: [
-        'style',
-        'css?modules=true&importLoaders=1',
-        'postcss'
+      include: [/node_modules/, /TodoList/],
+      use: [
+        'style-loader',
+        {
+          loader: 'css-loader',
+          options: {
+            importLoaders: 1,
+            modules: true
+          }
+        },
+        'postcss-loader'
       ],
       test: /\.css$/
     }
   ]);
 
 module.exports = Object.assign({}, defaultConfig, {
-  cache: true,
-
   devServer: {
     contentBase: './dist',
     historyApiFallback: true,
@@ -72,20 +64,13 @@ module.exports = Object.assign({}, defaultConfig, {
     }
   },
 
-  entry: [
-    path.resolve(__dirname, 'TodoList', 'index.js')
-  ],
+  entry: [path.resolve(__dirname, 'TodoList', 'index.js')],
 
-  eslint: Object.assign({}, defaultConfig.eslint, {
-    failOnWarning: false
+  externals: undefined,
+
+  module: Object.assign({}, defaultConfig.module, {
+    rules
   }),
-
-  externals: null,
-
-  module: {
-    preLoaders,
-    loaders
-  },
 
   output: Object.assign({}, defaultConfig.output, {
     publicPath: `http://localhost:${PORT}/`
@@ -96,7 +81,6 @@ module.exports = Object.assign({}, defaultConfig, {
     new webpack.ProvidePlugin({
       React: 'react'
     }),
-    new HtmlWebpackPlugin(),
-    new WebpackDashboard()
+    new HtmlWebpackPlugin()
   ]
 });

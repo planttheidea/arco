@@ -1,26 +1,17 @@
 // external dependencies
 import isElement from 'lodash/isElement';
 import isPlainObject from 'lodash/isPlainObject';
-import React, {
-  PropTypes
-} from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-  Provider
-} from 'react-redux';
+import {Provider} from 'react-redux';
 
 // components
-import {
-  Component
-} from './Component';
-import {
-  createComponent
-} from './components';
+import {Component} from './Component';
+import {createComponent} from './components';
 
 // modules
-import createModule, {
-  getActionConstants
-} from './state';
+import createModule, {getCreateReducer} from './state';
 
 // store
 import createStore from './store';
@@ -32,7 +23,7 @@ import ajax, {
   head,
   patch,
   post,
-  put
+  put,
 } from './ajax';
 
 // router
@@ -53,7 +44,7 @@ import {
   routerShape,
   syncHistoryWithImmutableStore,
   syncHistoryWithStore,
-  withRouter
+  withRouter,
 } from './router.js';
 
 // selectors
@@ -62,13 +53,11 @@ import createSelector from './selectors';
 // utils
 import {
   isReactElement,
-  testParameter
+  testParameter,
 } from './utils';
 
 // constants
-import {
-  ERROR_TYPES
-} from './constants';
+import {ERROR_TYPES} from './constants';
 
 /**
  * @module index
@@ -86,11 +75,11 @@ import {
  */
 export const getAppContainerDiv = () => {
   const div = document.createElement('div');
-  
+
   div.id = 'app-container';
 
   document.body.appendChild(div);
-  
+
   return div;
 };
 
@@ -120,16 +109,12 @@ export const render = (component, element, store) => {
   testParameter(component, isReactElement, 'Component passed is not a valid React element.', ERROR_TYPES.TYPE);
   testParameter(element, isElement, 'Element passed to render into is not a valid HTML element.', ERROR_TYPES.TYPE);
   testParameter(store, isPlainObject, 'Store passed is not a valid arco store.', ERROR_TYPES.TYPE);
-  
+
   if (element.tagName.toLowerCase() === 'body') {
     element = getAppContainerDiv();
   }
 
-  ReactDOM.render((
-    <Provider store={store}>
-      {component}
-    </Provider>
-  ), element);
+  ReactDOM.render(<Provider store={store}>{component}</Provider>, element);
 };
 
 export {Component};
@@ -137,7 +122,7 @@ export {createComponent};
 export {PropTypes};
 
 export {createModule};
-export {getActionConstants};
+export {getCreateReducer};
 
 export {createStore};
 

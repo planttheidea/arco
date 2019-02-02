@@ -3,17 +3,14 @@ import moize from 'moize';
 import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
 import noop from 'lodash/noop';
-import {
-  Component
-} from 'react';
+import {Component} from 'react';
 
 // constants
 import {
   ERROR_TYPES,
   REACT_ELEMENT_TYPE,
   REACT_LIFECYCLE_METHODS,
-
-  keys
+  keys,
 } from './constants';
 
 /* eslint-disable no-console */
@@ -63,8 +60,12 @@ export const getComponentMethods = (options) => {
     if (REACT_LIFECYCLE_METHODS[method]) {
       lifecycleMethods[method] = options[method];
     } else {
-      testParameter(options[method], isFunction, `${method} is not a function, skipping assignment to instance.`,
-        ERROR_TYPES.TYPE);
+      testParameter(
+        options[method],
+        isFunction,
+        `${method} is not a function, skipping assignment to instance.`,
+        ERROR_TYPES.TYPE
+      );
 
       if (isFunction(options[method])) {
         localMethods[method] = options[method];
@@ -74,7 +75,7 @@ export const getComponentMethods = (options) => {
 
   return {
     lifecycleMethods,
-    localMethods
+    localMethods,
   };
 };
 
@@ -90,12 +91,10 @@ export const getComponentMethods = (options) => {
  * @param {Object} methods instance methods to pass down as props
  * @returns {Object}
  */
-export const getPropsAndMethods = (props, methods) => {
-  return {
-    ...props,
-    ...methods
-  };
-};
+export const getPropsAndMethods = (props, methods) => ({
+  ...props,
+  ...methods,
+});
 
 /**
  * @private
@@ -108,9 +107,7 @@ export const getPropsAndMethods = (props, methods) => {
  * @param {*} object object to test
  * @returns {boolean}
  */
-export const isReactClass = (object) => {
-  return Component.isPrototypeOf(object);
-};
+export const isReactClass = (object) => Component.isPrototypeOf(object);
 
 /**
  * @private
@@ -119,13 +116,11 @@ export const isReactClass = (object) => {
  *
  * @description
  * is the object a composite component wrapper for React
- * 
+ *
  * @param {*} object object to test
  * @returns {boolean}
  */
-export const isReactCompositeComponentWrapper = (object) => {
-  return !!(object && object._instance && object._instance.props);
-};
+export const isReactCompositeComponentWrapper = (object) => !!(object && object._instance && object._instance.props);
 
 /**
  * @private
@@ -138,9 +133,7 @@ export const isReactCompositeComponentWrapper = (object) => {
  * @param {ReactElement} object object to test
  * @returns {boolean}
  */
-export const isReactElement = (object) => {
-  return !!object && object.$$typeof === REACT_ELEMENT_TYPE;
-};
+export const isReactElement = (object) => !!object && object.$$typeof === REACT_ELEMENT_TYPE;
 
 /**
  * @private
@@ -153,9 +146,7 @@ export const isReactElement = (object) => {
  * @param {*} object object to test
  * @returns {boolean}
  */
-export const isReactEvent = (object) => {
-  return !!(object && object.nativeEvent && object.nativeEvent instanceof Event);
-};
+export const isReactEvent = (object) => !!(object && object.nativeEvent && object.nativeEvent instanceof Event);
 
 /**
  * @private
@@ -167,8 +158,8 @@ export const isReactEvent = (object) => {
  *
  * @returns {string}
  */
-export const memoizeSerializer = function() {
-  return JSON.stringify(arguments, (name, value) => {
+export const memoizeSerializer = (...args) =>
+  JSON.stringify(args, (name, value) => {
     if (isFunction(value)) {
       return `${value}`;
     }
@@ -183,7 +174,6 @@ export const memoizeSerializer = function() {
 
     return value;
   });
-};
 
 /**
  * @private
@@ -196,11 +186,10 @@ export const memoizeSerializer = function() {
  * @param {function} fn method to memoize
  * @returns {function}
  */
-export const memoize = (fn) => {
-  return moize(fn, {
-    serializer: memoizeSerializer
+export const memoize = (fn) =>
+  moize(fn, {
+    serializer: memoizeSerializer,
   });
-};
 
 /**
  * @private
@@ -213,10 +202,7 @@ export const memoize = (fn) => {
  * @param {function} metaHandler the method used to handle meta properties in atcion creation
  * @returns {boolean}
  */
-export const testMetaHandler = (metaHandler) => {
-  return !metaHandler || isFunction(metaHandler);
-};
-
+export const testMetaHandler = (metaHandler) => !metaHandler || isFunction(metaHandler);
 
 /**
  * @private
@@ -229,6 +215,4 @@ export const testMetaHandler = (metaHandler) => {
  * @param {function} handler the method used as reducer for a module
  * @returns {boolean}
  */
-export const testReducerHandler = (handler) => {
-  return isFunction(handler) || isPlainObject(handler);
-};
+export const testReducerHandler = (handler) => isFunction(handler) || isPlainObject(handler);

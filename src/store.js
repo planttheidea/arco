@@ -5,37 +5,31 @@ import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
 import {
   LOCATION_CHANGE,
-  routerReducer
+  routerReducer,
 } from 'react-router-redux';
 import {
   applyMiddleware,
   combineReducers,
   compose,
-  createStore as createReduxStore
+  createStore as createReduxStore,
 } from 'redux';
-import {
-  combineReducers as combineImmutableReducers
-} from 'redux-immutable';
+import {combineReducers as combineImmutableReducers} from 'redux-immutable';
 import reduxThunk from 'redux-thunk';
 
 // modules
-import {
-  getModules
-} from './state';
+import {getModules} from './state';
 
 // constants
 import {
   ARCO_STATE_KEY,
-  ERROR_TYPES
+  ERROR_TYPES,
 } from './constants';
 
 // utils
-import {
-  testParameter
-} from './utils';
+import {testParameter} from './utils';
 
 const IMMUTABLE_ROUTING_REDUCER_INITIAL_STATE = Immutable.fromJS({
-  locationBeforeTransitions: null
+  locationBeforeTransitions: null,
 });
 
 export const immutableRouterReducer = (state = IMMUTABLE_ROUTING_REDUCER_INITIAL_STATE, {payload, type}) => {
@@ -118,6 +112,7 @@ export const getComposedEnhancers = (middlewares = [], hasThunk) => {
     return;
   }
 
+  // eslint-disable-next-line rapid7/no-trailing-underscore
   const composeEnhancers = (window && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
   return composeEnhancers(applyMiddleware(...enhancers));
@@ -149,13 +144,13 @@ export const getReducerMap = (modules, hasHistory, isImmutable) => {
     if (isFunction(module)) {
       return {
         ...reducers,
-        [namespace]: module
+        [namespace]: module,
       };
     }
 
     return {
       ...reducers,
-      [namespace]: module.reducer
+      [namespace]: module.reducer,
     };
   }, {});
 
@@ -167,7 +162,7 @@ export const getReducerMap = (modules, hasHistory, isImmutable) => {
 
   return {
     ...moduleMap,
-    routing
+    routing,
   };
 };
 
@@ -199,14 +194,10 @@ export const getReducerMap = (modules, hasHistory, isImmutable) => {
  * @param {boolean} [thunk=true] whether to include redux-thunk in the middlewares used in the store creation
  * @returns {Store}
  */
-export const createStore = (modules, {
-  autoRestore = false,
-  history,
-  initialState = {},
-  isImmutable = false,
-  middlewares = [],
-  thunk = true
-} = {}) => {
+export const createStore = (
+  modules,
+  {autoRestore = false, history, initialState = {}, isImmutable = false, middlewares = [], thunk = true} = {}
+) => {
   testParameter(modules, isArray, 'The first parameter must be an array of modules.', ERROR_TYPES.TYPE);
   testParameter(initialState, isPlainObject, 'initialState must be an object.', ERROR_TYPES.TYPE);
   testParameter(middlewares, isArray, 'middlewares must be an array of functions.', ERROR_TYPES.TYPE);
