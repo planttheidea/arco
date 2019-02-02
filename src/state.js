@@ -5,25 +5,23 @@ import isString from 'lodash/isString';
 import noop from 'lodash/noop';
 import {
   createAction as createReduxAction,
-  handleActions
+  handleActions,
 } from 'redux-actions';
 
 // selectors
-import {
-  getIdentityValue
-} from './selectors';
+import {getIdentityValue} from './selectors';
 
 // constants
 import {
   ERROR_TYPES,
-  STATUS
+  STATUS,
 } from './constants';
 
 // utils
 import {
   testMetaHandler,
   testParameter,
-  testReducerHandler
+  testReducerHandler,
 } from './utils';
 
 let moduleCache = {};
@@ -43,13 +41,9 @@ let moduleCache = {};
  * @param {string} status status to provide for the action
  * @returns {function(): {status: string}}
  */
-export const asyncActionStatusCreator = (status) => {
-  return () => {
-    return {
-      status
-    };
-  };
-};
+export const asyncActionStatusCreator = (status) => () => ({
+  status,
+});
 
 /**
  * @private
@@ -63,9 +57,7 @@ export const asyncActionStatusCreator = (status) => {
  * @param {string} name name of the action
  * @returns {string}
  */
-export const createNamespacedName = (namespace, name) => {
-  return `${namespace}/${name}`;
-};
+export const createNamespacedName = (namespace, name) => `${namespace}/${name}`;
 
 /**
  * @private
@@ -78,7 +70,7 @@ export const createNamespacedName = (namespace, name) => {
  * @param {string} namespace namespace action will reside in
  * @returns {function}
  */
-export const getCreateAction = (namespace) => {
+export const getCreateAction = (namespace) =>
   /**
    * @function createAction
    *
@@ -100,7 +92,7 @@ export const getCreateAction = (namespace) => {
    * @param {function|null} [metaCreator=null] method to handle any additional metadata
    * @returns {function}
    */
-  return (name, payloadCreator = getIdentityValue, metaCreator = null) => {
+  (name, payloadCreator = getIdentityValue, metaCreator = null) => {
     testParameter(name, isString, 'Name of action must be a string.', ERROR_TYPES.TYPE);
     testParameter(payloadCreator, isFunction, 'Payload handler must be a function.', ERROR_TYPES.TYPE);
     testParameter(payloadCreator, isFunction, 'Payload handler must be a function.', ERROR_TYPES.TYPE);
@@ -111,12 +103,11 @@ export const getCreateAction = (namespace) => {
 
     moduleCache[namespace].actions[name] = {
       action,
-      constantName
+      constantName,
     };
 
     return action;
   };
-};
 
 /**
  * @private
@@ -186,12 +177,10 @@ export const getCreateAsyncAction = (namespace) => {
     const lifecycle = {
       onError,
       onRequest,
-      onSuccess
+      onSuccess,
     };
 
-    const action = (...args) => {
-      return payloadHandler(lifecycle, ...args);
-    };
+    const action = (...args) => payloadHandler(lifecycle, ...args);
 
     //in case you want different handlers in the reducer for each action status
     action.onError = onError;
@@ -206,9 +195,7 @@ export const getCreateAsyncAction = (namespace) => {
      *
      * @returns {string}
      */
-    action.toString = () => {
-      return actionName;
-    };
+    action.toString = () => actionName;
 
     moduleCache[namespace].actions[name].action = action;
 
@@ -227,7 +214,7 @@ export const getCreateAsyncAction = (namespace) => {
  * @param {string} namespace namespace reducer will reside in
  * @returns {function}
  */
-export const getCreateReducer = (namespace) => {
+export const getCreateReducer = (namespace) =>
   /**
    * @function createReducer
    *
@@ -237,7 +224,7 @@ export const getCreateReducer = (namespace) => {
    *
    * @example
    * import {
-   *  getActionConstants
+   *  getCreateReducer
    * } from 'arco';
    *
    * import module, {
@@ -248,8 +235,10 @@ export const getCreateReducer = (namespace) => {
    *  name: ''
    * };
    *
+   * const createReducer = getCreateReducer('namespace');
+   *
    * // use the handleActions method from redux-actions
-   * module.createReducer(INITIAL_STATE, (state, {
+   * createReducer(INITIAL_STATE, (state, {
    *  [setName](state, {payload}) {
    *    return {
    *      ...state,
@@ -259,7 +248,7 @@ export const getCreateReducer = (namespace) => {
    * });
    *
    * // or use the traditional reducer function method, which requires converting the actions toString
-   * module.createReducer(INITIAL_STATE, (state, {payload, type}) => {
+   * createReducer(INITIAL_STATE, (state, {payload, type}) => {
    *  switch (type) {
    *    case `${setName}`:
    *      return {
@@ -276,15 +265,13 @@ export const getCreateReducer = (namespace) => {
    * @param {function} handler method to handle state updates
    * @returns {function}
    */
-  return (initialState, handler) => {
+  (initialState, handler) => {
     let reducer;
 
     testParameter(handler, testReducerHandler, 'Reducer must either be an object or a function.', ERROR_TYPES.TYPE);
 
     if (isFunction(handler)) {
-      reducer = (state = initialState, action) => {
-        return handler(state, action);
-      };
+      reducer = (state = initialState, action) => handler(state, action);
     } else if (isPlainObject(handler)) {
       reducer = handleActions(handler, initialState);
     }
@@ -294,7 +281,6 @@ export const getCreateReducer = (namespace) => {
 
     return reducer;
   };
-};
 
 /**
  * @function createModule
@@ -321,7 +307,7 @@ export const createModule = (namespace) => {
 
   moduleCache[namespace] = {
     actions: {},
-    reducer: noop
+    reducer: noop,
   };
 
   const createAction = getCreateAction(namespace);
@@ -332,7 +318,7 @@ export const createModule = (namespace) => {
     createAction,
     createAsyncAction,
     createReducer,
-    namespace
+    namespace,
   };
 };
 

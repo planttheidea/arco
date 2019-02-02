@@ -1,11 +1,7 @@
 import test from 'ava';
-import React, {
-  Component
-} from 'react';
+import React, {Component} from 'react';
 import sinon from 'sinon';
-import {
-  mount
-} from 'enzyme';
+import {mount} from 'enzyme';
 
 import {
   getComponentMethods,
@@ -17,7 +13,7 @@ import {
   memoize,
   memoizeSerializer,
   testParameter,
-  testReducerHandler
+  testReducerHandler,
 } from 'src/utils';
 
 test('if getComponentMethods returns an object with two object properties for lifecycle methods and local methods', (t) => {
@@ -25,31 +21,31 @@ test('if getComponentMethods returns an object with two object properties for li
 
   const lifecycle = {
     componentDidMount() {},
-    componentDidUpdate() {}
+    componentDidUpdate() {},
   };
   const local = {
+    onBar() {},
     onFoo() {},
-    onBar() {}
   };
   const removed = {
-    baz: null
+    baz: null,
   };
 
   const options = {
     ...lifecycle,
     ...local,
-    ...removed
+    ...removed,
   };
 
   const result = getComponentMethods(options);
 
   t.deepEqual(result, {
     lifecycleMethods: {
-      ...lifecycle
+      ...lifecycle,
     },
     localMethods: {
-      ...local
-    }
+      ...local,
+    },
   });
 
   t.true(stub.calledOnce);
@@ -59,17 +55,17 @@ test('if getComponentMethods returns an object with two object properties for li
 
 test('if getPropsAndMethods merges the objects passed and returns a single object', (t) => {
   const foo = {
-    foo: 'foo'
+    foo: 'foo',
   };
   const bar = {
-    bar: 'bar'
+    bar: 'bar',
   };
 
   const result = getPropsAndMethods(foo, bar);
 
   t.deepEqual(result, {
     ...foo,
-    ...bar
+    ...bar,
   });
 });
 
@@ -85,12 +81,12 @@ test('if isReactClass checks if the object passed is an extension of the compone
 test('if isReactCompositeComponentWrapper checks for the recursive wrapped instance props', (t) => {
   const object = {};
   const dummyWithInstance = {
-    _instance: {}
+    _instance: {},
   };
   const dummyWithInstanceProps = {
     _instance: {
-      props: {}
-    }
+      props: {},
+    },
   };
 
   t.false(isReactCompositeComponentWrapper(object));
@@ -99,9 +95,7 @@ test('if isReactCompositeComponentWrapper checks for the recursive wrapped insta
 });
 
 test('if isReactElement checks if the object is a compiled JSX element', (t) => {
-  const Foo = (() => {
-    return <div/>;
-  })();
+  const Foo = (() => <div />)();
   const object = {};
 
   t.true(isReactElement(Foo));
@@ -117,10 +111,10 @@ test('if isReactEvent checks for the nativeEvent property being of Event ancestr
 
   const object = {};
   const objectWithFakeProperty = {
-    nativeEvent: 'foo'
+    nativeEvent: 'foo',
   };
   const simulatedEvent = {
-    nativeEvent: new FakeEvent()
+    nativeEvent: new FakeEvent(),
   };
 
   t.false(isReactEvent(object));
@@ -141,7 +135,7 @@ test('if memoize uses the memoizeSerializer and caches correctly', (t) => {
   const memoizedFn = memoize(spy);
 
   const object = {
-    foo: bar
+    foo: bar,
   };
 
   const firstResult = memoizedFn(object);
@@ -159,26 +153,16 @@ test('if memoizeSerializer will convert the objects correctly', (t) => {
   const fn = function(foo) {
     return foo;
   };
-  const Foo = ({foo}) => {
-    return (
-      <div data-foo={foo}/>
-    );
-  };
-  const reactElement = (<Foo foo="bar"/>);
+  const Foo = ({foo}) => <div data-foo={foo} />;
+  const reactElement = <Foo foo="bar" />;
 
   const fnResult = memoizeSerializer(fn);
 
-  t.is(fnResult, JSON.stringify({
-    '0': fn.toString()
-  }));
+  t.is(fnResult, JSON.stringify([fn.toString()]));
 
   const reactElementResult = memoizeSerializer(reactElement);
 
-  t.is(reactElementResult, JSON.stringify({
-    '0': {
-      foo: 'bar'
-    }
-  }));
+  t.is(reactElementResult, JSON.stringify([{foo: 'bar'}]));
 });
 
 test('if testParameter triggers console.error if matching function returns false', (t) => {
@@ -186,15 +170,11 @@ test('if testParameter triggers console.error if matching function returns false
 
   const foo = 'foo';
 
-  testParameter(foo, (item) => {
-    return item === foo;
-  }, foo);
+  testParameter(foo, (item) => item === foo, foo);
 
   t.true(stub.notCalled);
 
-  testParameter('bar', (item) => {
-    return item === foo;
-  }, foo);
+  testParameter('bar', (item) => item === foo, foo);
 
   t.true(stub.calledOnce);
 

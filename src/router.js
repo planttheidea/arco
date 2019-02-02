@@ -18,21 +18,17 @@ import {
   match,
   routerShape,
   useRouterHistory,
-  withRouter
+  withRouter,
 } from 'react-router';
-import {
-  syncHistoryWithStore
-} from 'react-router-redux';
+import {syncHistoryWithStore} from 'react-router-redux';
 
 // utils
-import {
-  testParameter
-} from './utils';
+import {testParameter} from './utils';
 
 // constants
 import {
   ERROR_TYPES,
-  HISTORY_TYPES
+  HISTORY_TYPES,
 } from './constants';
 
 /**
@@ -118,14 +114,13 @@ export const createHistory = (history = HISTORY_TYPES.BROWSER, memoryHistoryOpti
  * @param {Object} [options={}] additional options for syncHistoryWithStore
  * @returns {Object}
  */
-export const syncHistoryWithImmutableStore = (history, store, options = {}) => {
-  return syncHistoryWithStore(history, store, {
+export const syncHistoryWithImmutableStore = (history, store, options = {}) =>
+  syncHistoryWithStore(history, store, {
     ...options,
     selectLocationState(state) {
       return state.get('routing').toJS();
-    }
+    },
   });
-};
 
 export {IndexLink};
 export {IndexRedirect};

@@ -1,11 +1,8 @@
 {
-  "plugins": [
-    "transform-decorators-legacy",
-    "add-module-exports"
-  ],
+  "plugins": ["transform-decorators-legacy", "add-module-exports"],
   "presets": [
     [
-      "latest",
+      "env",
       {
         "loose": true
       }

@@ -4,7 +4,7 @@ import sinon from 'sinon';
 
 import {
   LOCATION_CHANGE,
-  routerReducer
+  routerReducer,
 } from 'react-router-redux';
 
 import {
@@ -13,12 +13,10 @@ import {
   createStore,
   getComposedEnhancers,
   getReducerMap,
-  immutableRouterReducer
+  immutableRouterReducer,
 } from 'src/store';
 
-import {
-  ARCO_STATE_KEY
-} from 'src/constants';
+import {ARCO_STATE_KEY} from 'src/constants';
 
 test('if addWindowUnloadListener adds an event listener to the window object', (t) => {
   const stub = sinon.stub(window, 'addEventListener');
@@ -34,12 +32,12 @@ test('if addWindowUnloadListener adds an event listener to the window object', (
 
 test('if addWindowUnloadListener will get the store state and save it in sessionStorage', (t) => {
   const state = {
-    foo: 'bar'
+    foo: 'bar',
   };
   const store = {
     getState() {
       return state;
-    }
+    },
   };
 
   addWindowUnloadListener(store);
@@ -58,7 +56,7 @@ test('if addWindowUnloadListener will get the store state and save it in session
 test('if createRestorableStateStore will create a redux store', (t) => {
   const enhancers = getComposedEnhancers([], true);
   const initialState = {
-    foo: 'bar'
+    foo: 'bar',
   };
   const result = createRestorableStateStore(() => {}, enhancers, initialState);
 
@@ -66,13 +64,15 @@ test('if createRestorableStateStore will create a redux store', (t) => {
   t.true(isFunction(result.subscribe));
   t.true(isFunction(result.getState));
   t.true(isFunction(result.replaceReducer));
-  t.true(isFunction(result['@@observable']));
 });
 
 test('if createRestorableStateStore will parse the state in storage if it exists', (t) => {
-  window.sessionStorage.setItem(ARCO_STATE_KEY, JSON.stringify({
-    foo: 'bar'
-  }));
+  window.sessionStorage.setItem(
+    ARCO_STATE_KEY,
+    JSON.stringify({
+      foo: 'bar',
+    })
+  );
 
   const parseSpy = sinon.spy(JSON, 'parse');
   const addEventListenerSpy = sinon.spy(window, 'addEventListener');
@@ -91,9 +91,7 @@ test('if createRestorableStateStore will parse the state in storage if it exists
 });
 
 test('if createStore creates a store when autoRestore is false', (t) => {
-  const reducer = (state = {}) => {
-    return state;
-  };
+  const reducer = (state = {}) => state;
 
   reducer.namespace = 'app';
 
@@ -103,25 +101,21 @@ test('if createStore creates a store when autoRestore is false', (t) => {
   t.true(isFunction(result.subscribe));
   t.true(isFunction(result.getState));
   t.true(isFunction(result.replaceReducer));
-  t.true(isFunction(result['@@observable']));
 });
 
 test('if createStore creates a store when autoRestore is true', (t) => {
-  const reducer = (state = {}) => {
-    return state;
-  };
+  const reducer = (state = {}) => state;
 
   reducer.namespace = 'app';
 
   const result = createStore([reducer], {
-    autoRestore: true
+    autoRestore: true,
   });
 
   t.true(isFunction(result.dispatch));
   t.true(isFunction(result.subscribe));
   t.true(isFunction(result.getState));
   t.true(isFunction(result.replaceReducer));
-  t.true(isFunction(result['@@observable']));
 });
 
 test('if getComposedEnhancers returns undefined when no middlewares are used', (t) => {
@@ -147,7 +141,7 @@ test('if getReducerMap returns a map of namespace => reducer combinations', (t) 
 
   t.deepEqual(result, {
     fn1,
-    fn2
+    fn2,
   });
 });
 
@@ -163,7 +157,7 @@ test('if getReducerMap appends the routerReducer if history is set to true', (t)
   t.deepEqual(result, {
     fn1,
     fn2,
-    routing: routerReducer
+    routing: routerReducer,
   });
 });
 
@@ -179,7 +173,7 @@ test('if getReducerMap appends the immutableRouterReducer if history and isImmut
   t.deepEqual(result, {
     fn1,
     fn2,
-    routing: immutableRouterReducer
+    routing: immutableRouterReducer,
   });
 });
 
@@ -187,18 +181,21 @@ test('if immutableRouterReducer returns correctly based on type', (t) => {
   const state = {
     set(key, value) {
       return {
-        [key]: value
+        [key]: value,
       };
-    }
+    },
   };
 
   const notChangeResult = immutableRouterReducer(state, {type: 'FOO'});
 
   t.is(notChangeResult, state);
 
-  const changeResult = immutableRouterReducer(state, {payload: 'foo', type: LOCATION_CHANGE});
+  const changeResult = immutableRouterReducer(state, {
+    payload: 'foo',
+    type: LOCATION_CHANGE,
+  });
 
   t.deepEqual(changeResult, {
-    locationBeforeTransitions: 'foo'
+    locationBeforeTransitions: 'foo',
   });
 });

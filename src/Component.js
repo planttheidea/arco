@@ -1,14 +1,12 @@
 // external dependencies
 import bind from 'lodash/bind';
 import React from 'react';
-import {
-  findDOMNode
-} from 'react-dom';
+import {findDOMNode} from 'react-dom';
 
 // utils
 import {
   getPropsAndMethods,
-  memoize
+  memoize,
 } from './utils';
 
 /**
@@ -59,7 +57,7 @@ export class Component extends React.Component {
 
     this._getPropsToPass = memoize(getPropsAndMethods);
     this._localMethods = {
-      getDOMNode: this.getDOMNode
+      getDOMNode: this.getDOMNode,
     };
     this.render = bind(this.render, this, this.props, this.context);
   }
@@ -93,7 +91,7 @@ export class Component extends React.Component {
    *          className="input"
    *          type="text"
    *        />
- *        </div>
+   *        </div>
    *    );
    *  }
    * }
@@ -108,7 +106,7 @@ export class Component extends React.Component {
   getDOMNode = (selector) => {
     const domNode = findDOMNode(this);
 
-    if (!!selector) {
+    if (selector) {
       return domNode.querySelector(selector);
     }
 

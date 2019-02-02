@@ -4,14 +4,10 @@ import isString from 'lodash/isString';
 import isPlainObject from 'lodash/isPlainObject';
 
 // utils
-import {
-  testParameter
-} from './utils';
+import {testParameter} from './utils';
 
 // constants
-import {
-  ERROR_TYPES
-} from './constants';
+import {ERROR_TYPES} from './constants';
 
 /**
  * @module ajax
@@ -35,9 +31,7 @@ import {
  * @param {Object} [options={}] axios options to pass to the instance when created
  * @returns {AxiosInstance}
  */
-export const createInstance = (options = {}) => {
-  return axios.create(options);
-};
+export const createInstance = (options = {}) => axios.create(options);
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -65,53 +59,45 @@ export const createInstance = (options = {}) => {
  */
 /* eslint-enable */
 export const setDefaults = ({baseURL, headers} = {}) => {
-  if (!!baseURL) {
+  if (baseURL) {
     testParameter(baseURL, isString, 'baseURL provided is not a string.', ERROR_TYPES.TYPE);
 
     axios.defaults.baseURL = baseURL;
   }
 
-  if (!!headers) {
+  if (headers) {
     testParameter(headers, isPlainObject, 'headers provided are not an object.', ERROR_TYPES.TYPE);
 
     const currentHeaders = axios.defaults.headers;
-    const {
-      common,
-      del,
-      get,
-      head,
-      patch,
-      post,
-      put
-    } = headers;
+    const {common, del, get, head, patch, post, put} = headers;
 
     axios.defaults.headers.common = {
       ...currentHeaders.common,
-      ...common
+      ...common,
     };
     axios.defaults.headers.delete = {
       ...currentHeaders.delete,
-      ...del
+      ...del,
     };
     axios.defaults.headers.get = {
       ...currentHeaders.get,
-      ...get
+      ...get,
     };
     axios.defaults.headers.head = {
       ...currentHeaders.head,
-      ...head
+      ...head,
     };
     axios.defaults.headers.patch = {
       ...currentHeaders.patch,
-      ...patch
+      ...patch,
     };
     axios.defaults.headers.post = {
       ...currentHeaders.post,
-      ...post
+      ...post,
     };
     axios.defaults.headers.put = {
       ...currentHeaders.put,
-      ...put
+      ...put,
     };
   }
 
@@ -247,5 +233,5 @@ export default {
   patch,
   post,
   put,
-  setDefaults
+  setDefaults,
 };

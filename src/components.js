@@ -1,15 +1,12 @@
 // external dependencies
 import isFunction from 'lodash/isFunction';
 import React from 'react';
-import {
-  connect
-} from 'react-redux';
+import {connect} from 'react-redux';
 
 // constants
 import {
   ERROR_TYPES,
-
-  keys
+  keys,
 } from './constants';
 
 // utils
@@ -17,7 +14,7 @@ import {
   getComponentMethods,
   isReactClass,
   isReactEvent,
-  testParameter
+  testParameter,
 } from './utils';
 
 // components
@@ -41,7 +38,7 @@ import Component from './Component';
  * @returns {Component}
  */
 export const addPropertyIfExists = (component, property, value) => {
-  if (!!value) {
+  if (value) {
     component[property] = value;
   }
 
@@ -55,7 +52,7 @@ export const addPropertyIfExists = (component, property, value) => {
  *
  * @description
  * assign the child context to the component passed
- * 
+ *
  * @param {Component} component component to assign child context to
  * @param {function} getChildContext method for getting child context
  * @param {boolean} [canAccessThis=false] can the method access the instance
@@ -66,9 +63,7 @@ export const assignChildContext = (component, getChildContext, canAccessThis = f
 
   const boundThis = canAccessThis ? component : undefined;
 
-  component.getChildContext = () => {
-    return getChildContext.call(boundThis, component.props, component.context);
-  };
+  component.getChildContext = () => getChildContext.call(boundThis, component.props, component.context);
 
   return component;
 };
@@ -88,14 +83,17 @@ export const assignChildContext = (component, getChildContext, canAccessThis = f
  * @param {Object} reduxOptions additional options to pass to @connect
  * @returns {Component}
  */
-export const connectIfReduxPropertiesExist = (component, {
-  mapDispatchToProps,
-  mapStateToProps,
-  mergeProps,
-  reduxOptions
-}) => {
+export const connectIfReduxPropertiesExist = (
+  component,
+  {mapDispatchToProps, mapStateToProps, mergeProps, reduxOptions}
+) => {
   if (mapDispatchToProps || mapStateToProps || mergeProps || reduxOptions) {
-    return connect(mapStateToProps, mapDispatchToProps, mergeProps, reduxOptions)(component);
+    return connect(
+      mapStateToProps,
+      mapDispatchToProps,
+      mergeProps,
+      reduxOptions
+    )(component);
   }
 
   return component;
@@ -115,9 +113,7 @@ export const connectIfReduxPropertiesExist = (component, {
  * @param {Object} [component.props] props passed to the HOC
  * @returns {Object}
  */
-export const getAllPropsToPass = (component) => {
-  return component._getPropsToPass(component.props, component._localMethods);
-};
+export const getAllPropsToPass = (component) => component._getPropsToPass(component.props, component._localMethods);
 
 /**
  * @private
@@ -139,8 +135,12 @@ export const assignLifecycleMethods = (component, lifecycleMethods, canAccessThi
   const appliedThis = canAccessThis ? component : undefined;
 
   keys(lifecycleMethods).forEach((key) => {
-    testParameter(lifecycleMethods[key], isFunction,
-      `${key} is not a function, skipping assignment to instance.`, ERROR_TYPES.TYPE);
+    testParameter(
+      lifecycleMethods[key],
+      isFunction,
+      `${key} is not a function, skipping assignment to instance.`,
+      ERROR_TYPES.TYPE
+    );
 
     component[key] = (props) => {
       let args = [getAllPropsToPass(component)];
@@ -175,10 +175,7 @@ export const assignLifecycleMethods = (component, lifecycleMethods, canAccessThi
 export const assignLocalMethods = (component, localMethods) => {
   keys(localMethods).forEach((key) => {
     component._localMethods[key] = (...args) => {
-      const [
-        event,
-        ...restOfArgs
-      ] = args;
+      const [event, ...restOfArgs] = args;
 
       const isFirstArgEvent = isReactEvent(event);
 
@@ -223,9 +220,7 @@ export const getStatefulComponent = (PassedComponent, options) => {
     ...restOfOptions
   } = options;
 
-  const {
-    lifecycleMethods
-  } = getComponentMethods(restOfOptions);
+  const {lifecycleMethods} = getComponentMethods(restOfOptions);
 
   class StatefulComponent extends PassedComponent {
     constructor(...args) {
@@ -272,10 +267,7 @@ export const getStatelessComponent = (PassedComponent, options) => {
     ...restOfOptions
   } = options;
 
-  const {
-    lifecycleMethods,
-    localMethods
-  } = getComponentMethods(restOfOptions);
+  const {lifecycleMethods, localMethods} = getComponentMethods(restOfOptions);
 
   addPropertyIfExists(PassedComponent, 'contextTypes', contextTypes);
   addPropertyIfExists(PassedComponent, 'propTypes', propTypes);
@@ -295,9 +287,7 @@ export const getStatelessComponent = (PassedComponent, options) => {
     render() {
       const propsToPass = this._getPropsToPass(this.props, this._localMethods);
 
-      return (
-        <PassedComponent {...propsToPass}/>
-      );
+      return <PassedComponent {...propsToPass} />;
     }
   }
 

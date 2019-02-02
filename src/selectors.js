@@ -5,18 +5,14 @@ import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
 import {
   createSelector as createReselectSelector,
-  createSelectorCreator
+  createSelectorCreator,
 } from 'reselect';
 
 // utils
-import {
-  testParameter
-} from './utils';
+import {testParameter} from './utils';
 
 // constants
-import {
-  ERROR_TYPES
-} from './constants';
+import {ERROR_TYPES} from './constants';
 
 /**
  * @module selectors
@@ -38,9 +34,7 @@ export const createIdentitySelector = (property) => {
     return property;
   }
 
-  return (passedState) => {
-    return get(passedState, property);
-  };
+  return (passedState) => get(passedState, property);
 };
 
 /**
@@ -54,9 +48,7 @@ export const createIdentitySelector = (property) => {
  * @param {*} value value to pass through
  * @returns {*}
  */
-export const getIdentityValue = (value) => {
-  return value;
-};
+export const getIdentityValue = (value) => value;
 
 /**
  * @private
@@ -70,11 +62,8 @@ export const getIdentityValue = (value) => {
  * @param {Object} options additional options to use when creating the selector generator
  * @returns {function}
  */
-export const getSelectorGenerator = (customMemoizer, options) => {
-  return isFunction(customMemoizer)
-    ? createSelectorCreator(customMemoizer, ...options)
-    : createReselectSelector;
-};
+export const getSelectorGenerator = (customMemoizer, options) =>
+  isFunction(customMemoizer) ? createSelectorCreator(customMemoizer, ...options) : createReselectSelector;
 
 /**
  * @private
@@ -87,15 +76,12 @@ export const getSelectorGenerator = (customMemoizer, options) => {
  * @param {Array<string>} keys array of keys to use for values in structured selector
  * @returns {function(Array<*>): Object}
  */
-export const getStructuredValue = (keys) => {
-  return (...values) => {
-    return keys.reduce((structuredValue, key, keyIndex) => {
-      structuredValue[key] = values[keyIndex];
+export const getStructuredValue = (keys) => (...values) =>
+  keys.reduce((structuredValue, key, keyIndex) => {
+    structuredValue[key] = values[keyIndex];
 
-      return structuredValue;
-    }, {});
-  };
-};
+    return structuredValue;
+  }, {});
 
 /**
  * @private
@@ -178,8 +164,12 @@ export const createSelector = (
     return getStructuredSelector(properties, selectorGenerator);
   }
 
-  testParameter(properties, isArray, 'Properties passed must be either an object of keys and paths or an ' +
-    'array of paths.', ERROR_TYPES.TYPE);
+  testParameter(
+    properties,
+    isArray,
+    'Properties passed must be either an object of keys and paths or an array of paths.',
+    ERROR_TYPES.TYPE
+  );
   testParameter(getComputedValue, isFunction, 'Computed value passed must be a function.', ERROR_TYPES.TYPE);
 
   return getStandardSelector(properties, selectorGenerator, getComputedValue);

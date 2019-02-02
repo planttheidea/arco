@@ -7,47 +7,33 @@ const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 module.exports = {
   devtool: '#source-map',
 
-  entry: [
-    path.resolve(__dirname, 'src', 'index.js')
-  ],
+  entry: [path.resolve(__dirname, 'src', 'index.js')],
 
-  externals: {
-    immutable: {
-      amd: 'immutable',
-      commonjs: 'immutable',
-      commonjs2: 'immutable',
-      root: 'Immutable'
-    }
-  },
+  externals: ['immutable'],
 
-  eslint: {
-    configFile: '.eslintrc',
-    emitError: true,
-    failOnError: true,
-    failOnWarning: true,
-    formatter: require('eslint-friendly-formatter')
-  },
+  mode: 'development',
 
   module: {
-    preLoaders: [
+    rules: [
       {
-        include: [
-          /src/
-        ],
+        enforce: 'pre',
+        include: [/src/],
         loader: 'eslint-loader',
-        test: /\.js$/
-      }
-    ],
-
-    loaders: [
+        options: {
+          configFile: '.eslintrc',
+          emitError: true,
+          failOnError: true,
+          failOnWarning: true,
+          formatter: require('eslint-friendly-formatter'),
+        },
+        test: /\.js$/,
+      },
       {
-        include: [
-          /src/
-        ],
-        loader: 'babel',
-        test: /\.js?$/
-      }
-    ]
+        include: [/src/],
+        loader: 'babel-loader',
+        test: /\.js?$/,
+      },
+    ],
   },
 
   output: {
@@ -55,24 +41,13 @@ module.exports = {
     library: 'Arco',
     libraryTarget: 'umd',
     path: path.resolve(__dirname, 'dist'),
-    umdNamedDefine: true
+    umdNamedDefine: true,
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin([
-      'NODE_ENV'
-    ]),
+    new webpack.EnvironmentPlugin(['NODE_ENV']),
     new LodashModuleReplacementPlugin({
-      collections: true
-    })
+      collections: true,
+    }),
   ],
-
-  resolve: {
-    extensions: [
-      '',
-      '.js'
-    ],
-
-    root: __dirname
-  }
 };
