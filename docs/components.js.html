@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>arco Source: components.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.paper.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">arco</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-ajax.html">ajax</a></li><li><a href="module-components.html">components</a></li><li><a href="module-index.html">index</a></li><li><a href="module-router.html">router</a></li><li><a href="module-selectors.html">selectors</a></li><li><a href="module-state.html">state</a></li><li><a href="module-store.html">store</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="Component.html">Component</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="tutorial-Actions.html">Actions</a></li><li><a href="tutorial-Ajax.html">Ajax</a></li><li><a href="tutorial-Components.html">Components</a></li><li><a href="tutorial-History.html">History</a></li><li><a href="tutorial-Modules.html">Modules</a></li><li><a href="tutorial-Reducers.html">Reducers</a></li><li><a href="tutorial-Rendering.html">Rendering</a></li><li><a href="tutorial-Router.html">Router</a></li><li><a href="tutorial-Selectors.html">Selectors</a></li><li><a href="tutorial-Store.html">Store</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: components.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// external dependencies
+import isFunction from 'lodash/isFunction';
+import React from 'react';
+import {connect} from 'react-redux';
+
+// constants
+import {
+  ERROR_TYPES,
+  keys,
+} from './constants';
+
+// utils
+import {
+  getComponentMethods,
+  isReactClass,
+  isReactEvent,
+  testParameter,
+} from './utils';
+
+// components
+import Component from './Component';
+
+/**
+ * @module components
+ */
+
+/**
+ * @private
+ *
+ * @function addPropertyIfExists
+ *
+ * @description
+ * add to component the property if the value exists
+ *
+ * @param {Component} component component to add the property to
+ * @param {string} property property name
+ * @param {*} value value of the property to assign
+ * @returns {Component}
+ */
+export const addPropertyIfExists = (component, property, value) => {
+  if (value) {
+    component[property] = value;
+  }
+
+  return component;
+};
+
+/**
+ * @private
+ *
+ * @function assignChildContext
+ *
+ * @description
+ * assign the child context to the component passed
+ *
+ * @param {Component} component component to assign child context to
+ * @param {function} getChildContext method for getting child context
+ * @param {boolean} [canAccessThis=false] can the method access the instance
+ * @returns {Component}
+ */
+export const assignChildContext = (component, getChildContext, canAccessThis = false) => {
+  testParameter(getChildContext, isFunction, 'getChildContext is not a function', ERROR_TYPES.TYPE);
+
+  const boundThis = canAccessThis ? component : undefined;
+
+  component.getChildContext = () => getChildContext.call(boundThis, component.props, component.context);
+
+  return component;
+};
+
+/**
+ * @private
+ *
+ * @function connectIfReduxPropertiesExist
+ *
+ * @description
+ * if there are redux-specific options present, connect the component
+ *
+ * @param {Component} component component to connect to redux if applicable
+ * @param {function|Object} mapDispatchToProps functions wrapped in dispatch to pass as props
+ * @param {function} mapStateToProps state to pass as props
+ * @param {function} mergeProps function to merge store state with local props
+ * @param {Object} reduxOptions additional options to pass to @connect
+ * @returns {Component}
+ */
+export const connectIfReduxPropertiesExist = (
+  component,
+  {mapDispatchToProps, mapStateToProps, mergeProps, reduxOptions}
+) => {
+  if (mapDispatchToProps || mapStateToProps || mergeProps || reduxOptions) {
+    return connect(
+      mapStateToProps,
+      mapDispatchToProps,
+      mergeProps,
+      reduxOptions
+    )(component);
+  }
+
+  return component;
+};
+
+/**
+ * @private
+ *
+ * @function getAllPropsToPass
+ *
+ * @description
+ * combine normal props with local methods for all props to pass
+ *
+ * @param {Component} component component to get the props and local methods from
+ * @param {function} [component._getPropsToPass] method to retrieve combined props
+ * @param {Object} [component._localMethods] local methods assigned to the HOC instance
+ * @param {Object} [component.props] props passed to the HOC
+ * @returns {Object}
+ */
+export const getAllPropsToPass = (component) => component._getPropsToPass(component.props, component._localMethods);
+
+/**
+ * @private
+ *
+ * @function assignLifecycleMethods
+ *
+ * @description
+ * assign the lifecycle methods to the instance
+ *
+ * @param {Component|StatefulComponent} component component to assign lifecycle methods to
+ * @param {function} component._getPropsToPass function to retrieve all props to pass down
+ * @param {Object} component._localMethods local methods to add to props passed down
+ * @param {Object} component.props actual props to pass down
+ * @param {Object} lifecycleMethods map of lifecycle methods
+ * @param {boolean} [canAccessThis=false] can the method access the instance
+ * @returns {Component}
+ */
+export const assignLifecycleMethods = (component, lifecycleMethods, canAccessThis = false) => {
+  const appliedThis = canAccessThis ? component : undefined;
+
+  keys(lifecycleMethods).forEach((key) => {
+    testParameter(
+      lifecycleMethods[key],
+      isFunction,
+      `${key} is not a function, skipping assignment to instance.`,
+      ERROR_TYPES.TYPE
+    );
+
+    component[key] = (props) => {
+      let args = [getAllPropsToPass(component)];
+
+      if (props) {
+        args.push(props);
+      }
+
+      args.push(component.context);
+
+      return lifecycleMethods[key].apply(appliedThis, args);
+    };
+  });
+
+  return component;
+};
+
+/**
+ * @private
+ *
+ * @function assignLocalMethods
+ *
+ * @description
+ * assign the local methods to the instance
+ *
+ * @param {Component} component component to assign local methods to
+ * @param {function} component._getPropsToPass function to retrieve all props to pass down
+ * @param {Object} component._localMethods local methods to add to props passed down
+ * @param {Object} localMethods map of methods accessible locally through props
+ * @returns {Component}
+ */
+export const assignLocalMethods = (component, localMethods) => {
+  keys(localMethods).forEach((key) => {
+    component._localMethods[key] = (...args) => {
+      const [event, ...restOfArgs] = args;
+
+      const isFirstArgEvent = isReactEvent(event);
+
+      let argsToPass = [getAllPropsToPass(component)];
+
+      if (isFirstArgEvent) {
+        argsToPass.unshift(event);
+      }
+
+      argsToPass.push(component.context);
+      argsToPass.push(isFirstArgEvent ? restOfArgs : args);
+
+      return localMethods[key].apply(undefined, argsToPass);
+    };
+  });
+
+  return component;
+};
+
+/**
+ * @private
+ *
+ * @function getStatefulComponent
+ *
+ * @description
+ * get the stateful component that, if the options are passed, is connected to redux
+ *
+ * @param {Component} PassedComponent component wrapped by arco
+ * @param {Object} options options to apply to the HOC created by arco
+ * @returns {Component}
+ */
+export const getStatefulComponent = (PassedComponent, options) => {
+  const {
+    childContextTypes,
+    contextTypes,
+    getChildContext,
+    mapDispatchToProps: mapDispatchToPropsIgnored,
+    mapStateToProps: mapStateToPropsIgnored,
+    mergeProps: mergePropsIgnored,
+    propTypes,
+    reduxOptions: reduxOptionsIgnored,
+    ...restOfOptions
+  } = options;
+
+  const {lifecycleMethods} = getComponentMethods(restOfOptions);
+
+  class StatefulComponent extends PassedComponent {
+    constructor(...args) {
+      super(...args);
+
+      assignLifecycleMethods(this, lifecycleMethods, true);
+
+      if (childContextTypes &amp;&amp; getChildContext) {
+        assignChildContext(this, getChildContext, true);
+      }
+    }
+  }
+
+  addPropertyIfExists(StatefulComponent, 'childContextTypes', childContextTypes);
+  addPropertyIfExists(StatefulComponent, 'contextTypes', contextTypes);
+  addPropertyIfExists(StatefulComponent, 'propTypes', propTypes);
+
+  return connectIfReduxPropertiesExist(StatefulComponent, options);
+};
+
+/**
+ * @private
+ *
+ * @function getStatelessComponent
+ *
+ * @description
+ * get the stateless component HOC that has local and lifecycle methods based on
+ * the options, as well as possibly being connected to redux
+ *
+ * @param {Component|function} PassedComponent component wrapped by arco
+ * @param {Object} options options to apply to the HOC created by arco
+ * @returns {Component}
+ */
+export const getStatelessComponent = (PassedComponent, options) => {
+  const {
+    childContextTypes,
+    contextTypes,
+    getChildContext,
+    mapDispatchToProps: mapDispatchToPropsIgnored,
+    mapStateToProps: mapStateToPropsIgnored,
+    mergeProps: mergePropsIgnored,
+    propTypes,
+    reduxOptions: reduxOptionsIgnored,
+    ...restOfOptions
+  } = options;
+
+  const {lifecycleMethods, localMethods} = getComponentMethods(restOfOptions);
+
+  addPropertyIfExists(PassedComponent, 'contextTypes', contextTypes);
+  addPropertyIfExists(PassedComponent, 'propTypes', propTypes);
+
+  class StatelessComponent extends Component {
+    constructor(...args) {
+      super(...args);
+
+      assignLifecycleMethods(this, lifecycleMethods);
+      assignLocalMethods(this, localMethods);
+
+      if (childContextTypes &amp;&amp; getChildContext) {
+        assignChildContext(this, getChildContext);
+      }
+    }
+
+    render() {
+      const propsToPass = this._getPropsToPass(this.props, this._localMethods);
+
+      return &lt;PassedComponent {...propsToPass} />;
+    }
+  }
+
+  addPropertyIfExists(StatelessComponent, 'childContextTypes', childContextTypes);
+
+  return connectIfReduxPropertiesExist(StatelessComponent, options);
+};
+
+/**
+ * @function createComponent
+ *
+ * @description
+ * create a simple component where props are rendered
+ *
+ * @example
+ * import createComponent from 'arco';
+ *
+ * const OPTIONS = {
+ *  onButtonClick() {
+ *    alert('hello!');
+ *  }
+ * };
+ *
+ * const Foo = ({onButtonClick}) => {
+ *  return (
+ *    &lt;button
+ *      onClick={onButtonClick}
+ *      type="button"
+ *    >
+ *      Click me!
+ *    &lt;/button>
+ *  );
+ * };
+ *
+ * export default createComponent(Foo, OPTIONS);
+ *
+ * @param {Component|function} PassedComponent component to wrap
+ * @param {Object} [options={}] options to apply to the HOC created by arco
+ * @returns {Component|function(Component): Component}
+ */
+export const createComponent = (PassedComponent, options = {}) => {
+  if (isReactClass(PassedComponent)) {
+    return getStatefulComponent(PassedComponent, options);
+  }
+
+  return getStatelessComponent(PassedComponent, options);
+};
+
+export default createComponent;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

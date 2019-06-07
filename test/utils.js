@@ -107,7 +107,9 @@ test('if isReactEvent checks for the nativeEvent property being of Event ancestr
 
   class FakeEvent {}
 
-  global.Event = FakeEvent;
+  Object.defineProperty(global, 'Event', {
+    value: FakeEvent,
+  });
 
   const object = {};
   const objectWithFakeProperty = {
@@ -121,7 +123,11 @@ test('if isReactEvent checks for the nativeEvent property being of Event ancestr
   t.false(isReactEvent(objectWithFakeProperty));
   t.true(isReactEvent(simulatedEvent));
 
-  global.Event = currentEvent;
+  Object.defineProperty(global, 'Event', {
+    get() {
+      return currentEvent;
+    },
+  });
 });
 
 test('if memoize uses the memoizeSerializer and caches correctly', (t) => {

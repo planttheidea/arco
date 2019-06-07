@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>arco Source: store.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.paper.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">arco</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-ajax.html">ajax</a></li><li><a href="module-components.html">components</a></li><li><a href="module-index.html">index</a></li><li><a href="module-router.html">router</a></li><li><a href="module-selectors.html">selectors</a></li><li><a href="module-state.html">state</a></li><li><a href="module-store.html">store</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="Component.html">Component</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="tutorial-Actions.html">Actions</a></li><li><a href="tutorial-Ajax.html">Ajax</a></li><li><a href="tutorial-Components.html">Components</a></li><li><a href="tutorial-History.html">History</a></li><li><a href="tutorial-Modules.html">Modules</a></li><li><a href="tutorial-Reducers.html">Reducers</a></li><li><a href="tutorial-Rendering.html">Rendering</a></li><li><a href="tutorial-Router.html">Router</a></li><li><a href="tutorial-Selectors.html">Selectors</a></li><li><a href="tutorial-Store.html">Store</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: store.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// external dependencies
+import Immutable from 'immutable';
+import isArray from 'lodash/isArray';
+import isFunction from 'lodash/isFunction';
+import isPlainObject from 'lodash/isPlainObject';
+import {
+  LOCATION_CHANGE,
+  routerReducer,
+} from 'react-router-redux';
+import {
+  applyMiddleware,
+  combineReducers,
+  compose,
+  createStore as createReduxStore,
+} from 'redux';
+import {combineReducers as combineImmutableReducers} from 'redux-immutable';
+import reduxThunk from 'redux-thunk';
+
+// modules
+import {getModules} from './state';
+
+// constants
+import {
+  ARCO_STATE_KEY,
+  ERROR_TYPES,
+} from './constants';
+
+// utils
+import {testParameter} from './utils';
+
+const IMMUTABLE_ROUTING_REDUCER_INITIAL_STATE = Immutable.fromJS({
+  locationBeforeTransitions: null,
+});
+
+export const immutableRouterReducer = (state = IMMUTABLE_ROUTING_REDUCER_INITIAL_STATE, {payload, type}) => {
+  if (type === LOCATION_CHANGE) {
+    return state.set('locationBeforeTransitions', payload);
+  }
+
+  return state;
+};
+
+/**
+ * @module store
+ */
+
+/**
+ * @private
+ *
+ * @function addWindowUnloadListener
+ *
+ * @description
+ * add a listener to beforeunload to save the state in sessionStorage
+ *
+ * @param {Object} store state to store in sessionStorage for retrieval on refresh
+ */
+export const addWindowUnloadListener = (store) => {
+  window.addEventListener('beforeunload', () => {
+    const state = store.getState();
+
+    window.sessionStorage.setItem(ARCO_STATE_KEY, JSON.stringify(state));
+  });
+};
+
+/**
+ * @private
+ *
+ * @function createRestorableStateStore
+ *
+ * @description
+ * create a store that will automatically save and restore the state
+ * in session storage
+ *
+ * @param {function} reducers all reducers to be used in the store creation
+ * @param {function} enhancers all enhancers to be used in the store creation
+ * @param {Object} initialState state to hydrate the store with on creation
+ * @returns {Store}
+ */
+export const createRestorableStateStore = (reducers, enhancers, initialState) => {
+  const stateString = window &amp;&amp; window.sessionStorage.getItem(ARCO_STATE_KEY);
+  const preloadedState = stateString ? JSON.parse(stateString) : {...initialState};
+  const store = createReduxStore(reducers, preloadedState, enhancers);
+
+  if (window) {
+    addWindowUnloadListener(store);
+  }
+
+  return store;
+};
+
+/**
+ * @private
+ *
+ * @function getComposedEnhancers
+ *
+ * @description
+ * get the enhancers used in the store based on the middlewares passed
+ * and if thunk is to be included
+ *
+ * @param {Array&lt;function>} middlewares array of middlewares to be applied to the store
+ * @param {boolean} hasThunk whether to use redux-thunk middleware
+ * @returns {function|undefined}
+ */
+export const getComposedEnhancers = (middlewares = [], hasThunk) => {
+  let enhancers = [...middlewares];
+
+  if (hasThunk) {
+    enhancers.unshift(reduxThunk);
+  }
+
+  if (!enhancers.length) {
+    return;
+  }
+
+  // eslint-disable-next-line rapid7/no-trailing-underscore
+  const composeEnhancers = (window &amp;&amp; window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
+
+  return composeEnhancers(applyMiddleware(...enhancers));
+};
+
+/**
+ * @private
+ *
+ * @function getReducerMap
+ *
+ * @description
+ * get the map of reducers based on the modules / reducers
+ * passed and whether or not to include the routing reducer
+ *
+ * @param {Array&lt;Object|function>} modules array of modules or reducers to populate the store with
+ * @param {boolean} hasHistory whether a history object exists, and therefore should have a router reducer
+ * @param {boolean} isImmutable whether store is immutable or not
+ * @returns {Object}
+ */
+export const getReducerMap = (modules, hasHistory, isImmutable) => {
+  const moduleMap = modules.reduce((reducers, passedReducer) => {
+    const namespace = passedReducer.namespace;
+    const module = isFunction(passedReducer) ? passedReducer : getModules(namespace);
+
+    if (!module) {
+      return reducers;
+    }
+
+    if (isFunction(module)) {
+      return {
+        ...reducers,
+        [namespace]: module,
+      };
+    }
+
+    return {
+      ...reducers,
+      [namespace]: module.reducer,
+    };
+  }, {});
+
+  if (!hasHistory) {
+    return moduleMap;
+  }
+
+  const routing = !isImmutable ? routerReducer : immutableRouterReducer;
+
+  return {
+    ...moduleMap,
+    routing,
+  };
+};
+
+/**
+ * @function createStore
+ *
+ * @description
+ * create a store based on the options passed
+ *
+ * @example
+ * import {
+ *  createStore
+ * } from 'arco';
+ *
+ * import appModule from 'modules/app';
+ * import fooModule from 'modules/foo';
+ * import barModule from 'modules/bar';
+ *
+ * const store = createStore([appModule, fooModule, barModule], {
+ *  shouldRestoreState: true
+ * });
+ *
+ * @param {Array&lt;Object|function>} modules array of modules or reducers to use in the store creation
+ * @param {boolean} [autoRestore=false] whether the state should be kept in sessionStorage and automatically restored
+ * @param {Object} history history object to use for creation of the store
+ * @param {Object} [initialState={}] state to hydrate the store with upon creation
+ * @param {boolean} [isImmutable=false] whether to use redux-immutable when combining reducers (if using ImmutableJS)
+ * @param {Array&lt;Object|function>} [middlewares=[]] array of middlewares to use in the store creation
+ * @param {boolean} [thunk=true] whether to include redux-thunk in the middlewares used in the store creation
+ * @returns {Store}
+ */
+export const createStore = (
+  modules,
+  {autoRestore = false, history, initialState = {}, isImmutable = false, middlewares = [], thunk = true} = {}
+) => {
+  testParameter(modules, isArray, 'The first parameter must be an array of modules.', ERROR_TYPES.TYPE);
+  testParameter(initialState, isPlainObject, 'initialState must be an object.', ERROR_TYPES.TYPE);
+  testParameter(middlewares, isArray, 'middlewares must be an array of functions.', ERROR_TYPES.TYPE);
+
+  const reducerCombiner = isImmutable ? combineImmutableReducers : combineReducers;
+
+  const mapOfReducers = getReducerMap(modules, !!history, isImmutable);
+  const allReducers = reducerCombiner(mapOfReducers);
+  const enhancers = getComposedEnhancers(middlewares, thunk);
+
+  if (!autoRestore) {
+    return createReduxStore(allReducers, initialState, enhancers);
+  }
+
+  return createRestorableStateStore(allReducers, enhancers, initialState);
+};
+
+export default createStore;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

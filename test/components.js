@@ -19,7 +19,6 @@ import {
   createComponent,
   getStatefulComponent,
   getStatelessComponent,
-  hasGetPropsToPass
 } from 'src/components';
 
 import Component from 'src/Component';
@@ -55,7 +54,7 @@ test('if assignLifecycleMethods creates functions that are bound to the componen
   t.true(isFunction(result.componentDidUpdate));
 });
 
-test('if assignLifecycleMethods creates functions that are bound to the component passed', (t) => {
+test('if assignLifecycleMethods handles non-bindable methods correctly', (t) => {
   const component = {
     _getPropsToPass() {
       return {};

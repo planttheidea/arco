@@ -3,18 +3,21 @@
   "ava": {
     "concurrency": 5,
     "babel": {
-      "babelrc": true,
-      "plugins": [
-        "transform-decorators-legacy"
-      ]
+      "testOptions": {
+        "plugins": [
+          ["@babel/plugin-proposal-decorators", {
+            "legacy": true
+          }]
+        ]
+      }
     },
     "failFast": true,
     "files": [
       "test/*.js"
     ],
     "require": [
-      "babel-register",
-      "babel-polyfill",
+      "@babel/register",
+      "@babel/polyfill",
       "./test/helpers/setup-browser-env.js"
     ],
     "verbose": true
@@ -23,7 +26,7 @@
     "url": "https://github.com/planttheidea/arco/issues"
   },
   "dependencies": {
-    "axios": "^0.15.3",
+    "axios": "^0.19.0",
     "immutable": "^3.8.1",
     "lodash": "^4.17.11",
     "moize": "^1.0.3",
@@ -41,17 +44,26 @@
   },
   "description": "A React+Redux framework with standards, conventions, and far less boilerplate",
   "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-decorators": "^7.0.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
+    "@babel/plugin-proposal-function-sent": "^7.0.0",
+    "@babel/plugin-proposal-json-strings": "^7.0.0",
+    "@babel/plugin-proposal-numeric-separator": "^7.0.0",
+    "@babel/plugin-proposal-throw-expressions": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/plugin-syntax-import-meta": "^7.0.0",
+    "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.4.4",
     "autoprefixer": "^9.4.7",
-    "ava": "^0.25.0",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.2.5",
-    "babel-loader": "^7.1.5",
+    "ava": "^1.0.0",
+    "babel-eslint": "^9.0.0",
+    "babel-loader": "^8.0.0",
     "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.5",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
     "browser-env": "^3.2.5",
     "css-loader": "^2.1.0",
     "enzyme": "^2.6.0",

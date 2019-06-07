@@ -3,5 +3,17 @@ const MockDomStorage = require('mock-dom-storage');
 
 browserEnv();
 
-window.localStorage = MockDomStorage();
-window.sessionStorage = MockDomStorage();
+Object.defineProperties(window, {
+  localStorage: {
+    configurable: true,
+    enumerable: false,
+    value: MockDomStorage(),
+    writable: true,
+  },
+  sessionStorage: {
+    configurable: true,
+    enumerable: false,
+    value: MockDomStorage(),
+    writable: true,
+  },
+});
