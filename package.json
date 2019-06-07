@@ -5,9 +5,12 @@
     "babel": {
       "testOptions": {
         "plugins": [
-          ["@babel/plugin-proposal-decorators", {
-            "legacy": true
-          }]
+          [
+            "@babel/plugin-proposal-decorators",
+            {
+              "legacy": true
+            }
+          ]
         ]
       }
     },
@@ -132,5 +135,5 @@
     "transpile": "babel src --out-dir lib",
     "validate": "npm ls"
   },
-  "version": "0.1.2"
+  "version": "0.1.3"
 }
