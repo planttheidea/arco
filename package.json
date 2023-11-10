@@ -29,7 +29,7 @@
     "url": "https://github.com/planttheidea/arco/issues"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^1.6.0",
     "immutable": "^3.8.1",
     "lodash": "^4.17.11",
     "moize": "^1.0.3",
